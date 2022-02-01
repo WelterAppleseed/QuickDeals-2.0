@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="210dp">
+
+    <TextView
+        android:id="@+id/inf_page_content_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="@font/ops_reg"
+        android:includeFontPadding="false"
+        android:paddingStart="4dp"
+        android:paddingBottom="8dp"
+        android:paddingTop="20dp"
+        android:text="Late"
+        android:textColor="@color/gray"
+        android:textSize="16sp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/asd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inf_page_content_title"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:fadingEdgeLength="30dp"
+        android:requiresFadingEdge="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/nested_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:fadingEdgeLength="30dp"
+            android:nestedScrollingEnabled="false"
+            android:requiresFadingEdge="vertical" />
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

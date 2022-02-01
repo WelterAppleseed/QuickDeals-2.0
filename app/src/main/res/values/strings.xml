@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">QuickDeals 2.0</string>
+    <string name="buttonText">Display Next Course</string>
+    <string name="heading">MVP Architecture Pattern</string>
+    <string name="subHeading">GeeksforGeeks Computer Science Online Courses</string>
+    <string name="description">Course Description</string>
+    <string name="date_tv_text">Select date</string>
+    <string name="note_et_text">Add note</string>
+    <string name="category_tv_text">Various</string>
+    <string name="first_sector_info_title">Late</string>
+    <string name="second_sector_info_title">Today</string>
+    <string name="third_sector_info_title">Done</string>
+    <string name="task_count_text">%1$d Tasks</string>
+    <string name="new_task_date_shablon">%d, %s %02d, %02d:%02d</string>
+    <string name="late_date_shablon">%02d:%02d · %s %02d</string>
+    <string name="today_date_shablon">%02d:%02d</string>
+    <string name="done_date_shablon">%d, %s %02d, %02d:%02d</string>
+    <string name="date_shablon">%02d:%02d · %s %02%d</string>
+    <string name="lists_title">Lists</string>
+
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/alph_sort"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Alphabetical Sort" />
+        <item
+            android:id="@+id/def_sort"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Default Sort " />
+    </group>
+</menu>

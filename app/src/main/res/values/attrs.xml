@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TaskItem">
+        <attr name="state" format="enum">
+            <enum name="late" value="0"/>
+            <enum name="today" value="1"/>
+            <enum name="done" value="2"/>
+        </attr>
+        <attr name="textType" format="enum">
+            <enum name="def"  value="0"/>
+            <enum name="red_colored"  value="1"/>
+            <enum name="strikethrough" value="2"/></attr>
+    </declare-styleable>
+    <declare-styleable name="InfiniteQuickDealsPager">
+      <!--  <attr name="state" format="enum">
+            <enum name="late" value="0"/>
+            <enum name="today" value="1"/>
+            <enum name="done" value="2"/>
+        </attr>
+        <attr name="textType" format="enum">
+            <enum name="def"  value="0"/>
+            <enum name="red_colored"  value="1"/>
+            <enum name="strikethrough" value="2"/></attr>-->
+    </declare-styleable>
+</resources>
