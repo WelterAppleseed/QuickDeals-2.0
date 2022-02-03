@@ -1,4 +1,4 @@
-package com.example.fffaaaa
+package com.example.fffaaaa.custom
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -8,9 +8,8 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.*
-import com.example.fffaaaa.adapter.TasksAdapter
-import com.example.fffaaaa.room.TaskEntity
-import org.w3c.dom.Text
+import com.example.fffaaaa.R
+import com.example.fffaaaa.beginWithUpperCase
 import java.time.LocalDateTime
 
 class TaskItem : RelativeLayout {

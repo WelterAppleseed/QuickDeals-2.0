@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.create_reminer_one.view.date_tv
 import kotlinx.android.synthetic.main.create_reminer_one.view.new_rem_toolbar
 import kotlinx.android.synthetic.main.create_reminer_two.*
 import kotlinx.android.synthetic.main.create_reminer_two.view.*
+import java.time.LocalDateTime
 
 class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Fragment(),
     ReminderContract.View,
@@ -67,23 +68,31 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
     ): View? {
         val view = inflater.inflate(R.layout.create_reminer_two, container, false)
 
-        view.viewTreeObserver.addOnGlobalLayoutListener {   view.viewTreeObserver.addOnGlobalLayoutListener {
-            var r  = Rect()
-            view.getWindowVisibleDisplayFrame(r)
-            var screenH = view.rootView.height
-            var keypadH = screenH - r.bottom
+        view.viewTreeObserver.addOnGlobalLayoutListener {
+            view.viewTreeObserver.addOnGlobalLayoutListener {
+                var r = Rect()
+                view.getWindowVisibleDisplayFrame(r)
+                var screenH = view.rootView.height
+                var keypadH = screenH - r.bottom
 
-            if (keypadH > screenH * 0.15) {
-                if (!hasFocus) {
-                    onKeyboardVisibilityChanged(true)
-                }
-            } else {
-                if (hasFocus) {
-                   onKeyboardVisibilityChanged(false)
+                if (keypadH > screenH * 0.15) {
+                    if (!hasFocus) {
+                        onKeyboardVisibilityChanged(true)
+                    }
+                } else {
+                    if (hasFocus) {
+                        onKeyboardVisibilityChanged(false)
+                    }
                 }
             }
-        } }
-        view.scroll_v!!.viewTreeObserver.addOnScrollChangedListener(ScrollPositionObserver(view.scroll_v, view.act_im, resources.getDimensionPixelSize(R.dimen.act_im_size)))
+        }
+        view.scroll_v!!.viewTreeObserver.addOnScrollChangedListener(
+            ScrollPositionObserver(
+                view.scroll_v,
+                view.act_im,
+                resources.getDimensionPixelSize(R.dimen.act_im_size)
+            )
+        )
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         view.new_rem_toolbar.menu.findItem(R.id.close_it).setOnMenuItemClickListener {
             over()
@@ -106,17 +115,21 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         }
         view.createRemButton.setOnClickListener(View.OnClickListener {
             if (date_tv.text.equals(resources.getString(R.string.date_tv_text)) || view.task_et.length() == 0) {
-                if ( view.task_et.length() == 0) view.task_et_title.invalidValue()
+                if (view.task_et.length() == 0) view.task_et_title.invalidValue()
                 if (date_tv.text.equals(resources.getString(R.string.date_tv_text))) view.date_tv.invalidValue()
             } else {
                 hideSoftKeyboard(context!!)
                 newReminderPresenter!!.onAddReminderButton(
                     getSectorId(category_tv.text.toString()),
-                    if (category_img.tag == null) R.drawable.file_def else category_img.tag as Int,
+                    if (category_img.tag == null) R.drawable.file_def_dr else category_img.tag as Int,
                     category_tv.text.toString(),
-                    1, view.task_et.text.toString(), dateFromString(date_tv.text.toString())
+                    1,
+                    view.task_et.text.toString(),
+                    view.note_tv.text.toString(),
+                    dateFromString(date_tv.text.toString())
                 )
             }
+
         })
         return view
     }
@@ -157,9 +170,13 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         }
     }
 
+    override fun onNotificationCreating(taskEntity: TaskEntity, icon: Int) {
+        fragmentPresenter?.onNotificationEventReceived(taskEntity, icon)
+    }
+
     override fun onSortList(list: ArrayList<SectorEntity>) {
         Log.i("Function", "onSortList")
-        newReminderPresenter?.updateSectorsStringList()
+        newReminderPresenter?.updateSectorsStringList(list)
     }
 
     override fun attachNavigationPresenter(presenter: NavigationPresenter) {
@@ -177,8 +194,11 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             category_tv.text = data?.getStringExtra("title")
-            data?.getIntExtra("icon", R.drawable.file_def)?.let {
+            act_tv.text = data?.getStringExtra("title")
+            act_tv.setTextColor(context!!.getColor(data!!.getIntExtra("color", R.color.mainColor)))
+            data!!.getIntExtra("icon", R.drawable.file_def_dr).let {
                 category_img.setImageResource(it)
+                act_im.setImageResource(it)
                 category_img.tag = it
             }
         }
@@ -186,10 +206,18 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
 
     override fun onHiddenChanged(hidden: Boolean) {
         Log.i("Function", "onHiddenChanged")
-        view?.task_et?.text?.clear()
-        context?.getColor(R.color.black)?.let { view?.date_tv?.setTextColor(it) }
-        view?.date_tv?.text = context?.getString(R.string.date_tv_text)
-
+        val h = Handler()
+        if (hidden) {
+            h.postDelayed(Runnable {
+                view?.task_et?.text?.clear()
+                context?.getColor(R.color.black)?.let {
+                    view?.date_tv?.setTextColor(it)
+                    view?.task_et_title?.setTextColor(it)
+                }
+                view?.date_tv?.text = context?.getString(R.string.date_tv_text)
+                clearSectorIdentifiers()
+            }, 500)
+        }
         super.onHiddenChanged(hidden)
     }
 
@@ -198,5 +226,15 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         hasFocus = opened
         transit(opened)
         super.onKeyboardVisibilityChanged(opened)
+    }
+
+    private fun clearSectorIdentifiers() {
+        view?.category_img?.setImageResource(R.drawable.file_def_dr)
+        view?.category_img?.tag = null
+        view?.category_tv?.text = resources.getString(R.string.category_tv_text)
+        view?.act_im?.setImageResource(R.drawable.file_def_dr)
+        view?.act_tv?.text = resources.getString(R.string.category_tv_text)
+        view?.act_tv?.setTextColor(context!!.getColor(R.color.mainColor))
+        view?.category_tv?.text = resources.getString(R.string.category_tv_text)
     }
 }

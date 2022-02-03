@@ -24,38 +24,46 @@ class CategoryDialog : DialogFragment(), View.OnClickListener{
         }
 
     override fun onClick(v: View?) {
-        var icon = R.drawable.file_def
+        var icon = R.drawable.file_def_dr
         var title = "All"
+        var color = R.color.mainColor
         when(v?.id) {
             view?.home_i?.id -> {
-                icon = R.drawable.dog_house_def
+                icon = R.drawable.home_def_dr
                 title = "Home"
+                color = R.color.homeColor
             }
             view?.work_i?.id -> {
-                icon = R.drawable.briefcase_def
+                icon = R.drawable.work_def_dr
                 title = "Work"
+                color = R.color.workColor
             }
             view?.travel_i?.id -> {
-                icon = R.drawable.plane_def
+                icon = R.drawable.travel_def_dr
                 title = "Travel"
+                color = R.color.travelColor
             }
             view?.hobby_i?.id -> {
-                icon = R.drawable.color_palette_def
+                icon = R.drawable.hobby_def_dr
                 title = "Hobby"
+                color = R.color.hobbyColor
             }
             view?.market_i?.id -> {
-                icon = R.drawable.shopping_cart_def
+                icon = R.drawable.market_def_dr
                 title = "Market"
+                color = R.color.marketColor
             }
             view?.study_i?.id -> {
-                icon = R.drawable.book_def
+                icon = R.drawable.study_def_dr
                 title = "Study"
+                color = R.color.studyColor
             }
         }
         println("$title and $icon")
         val intent = Intent()
         intent.putExtra("title", title)
         intent.putExtra("icon", icon)
+        intent.putExtra("color", color)
         targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
         this.dismiss()
     }

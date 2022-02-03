@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.fffaaaa.TaskItem xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.fffaaaa.custom.TaskItem xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/empty_task"
     android:layout_height="70dp"/>

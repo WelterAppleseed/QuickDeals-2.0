@@ -33,7 +33,8 @@ class SectorAdapter(
         holder.sectorTitle.text = sector.title
         holder.sectorNotesCount.text =  "${sector.remCount} Tasks"
         holder.itemView.setOnClickListener {
-            fragmentPresenter.onSectorClicked(sectorList[position])}
+            println("$sectorList")
+            fragmentPresenter.onSectorClicked(this.sectorList[position])}
     }
 
     override fun getItemCount(): Int {

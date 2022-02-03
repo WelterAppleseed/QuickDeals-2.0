@@ -2,15 +2,13 @@ package com.example.fffaaaa.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 
-import android.R
 import android.content.Context
 
 import android.view.LayoutInflater
 import android.view.View
 
 import android.view.ViewGroup
-import android.widget.TextView
-import com.example.fffaaaa.TaskItem
+import com.example.fffaaaa.custom.TaskItem
 import kotlinx.android.synthetic.main.task_item_layout.view.*
 
 

@@ -1,4 +1,4 @@
-package com.example.fffaaaa.pager.const
+package com.example.fffaaaa.pager.defs
 
 class Constants {
     companion object {

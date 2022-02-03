@@ -10,6 +10,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Rect
+import android.util.Log
 import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -36,6 +37,14 @@ import com.example.fffaaaa.contract.KeyboardInterface
 import com.example.fffaaaa.adapter.Page
 import com.example.fffaaaa.presenter.FragmentPresenter
 import kotlin.collections.ArrayList
+import android.content.IntentFilter
+
+import android.content.Intent
+
+import android.content.BroadcastReceiver
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
+import kotlinx.android.synthetic.main.category_picker_dialog.view.*
 
 
 fun getSectorId(title: String): Long {
@@ -56,6 +65,11 @@ fun updateSectorInfo(
     val sectorInfoIconImg = layout.findViewById<ImageView>(R.id.sector_info_icon_img)
     val sectorInfoTitleTV = layout.findViewById<TextView>(R.id.sector_info_title_tv)
     val sectorInfoTaskCountTV = layout.findViewById<TextView>(R.id.sector_info_task_count_tv)
+    val sectorToolbar = layout.findViewById<Toolbar>(R.id.sector_toolbar)
+
+    val color = getColorBySectorIcon(sectorEntity.icon)
+    layout.backgroundTintList =  ContextCompat.getColorStateList(context, color)
+    sectorToolbar.backgroundTintList =  ContextCompat.getColorStateList(context, color)
 
     sectorInfoIconImg.setImageResource(sectorEntity.icon)
     sectorInfoTitleTV.text = sectorEntity.title
@@ -91,7 +105,7 @@ fun updateSectorInfo(
     }
 
     val pages: ArrayList<Page> = arrayListOf()
-
+    val pagesSize: ArrayList<Int> = arrayListOf()
     for (i in dayCountSet.indices) {
         val dayList = arrayListOf<TaskEntity>()
         var title = ""
@@ -106,17 +120,48 @@ fun updateSectorInfo(
         }
         pages.add(Page(title, dayList))
     }
-    pages.iterator().forEach { it.title }
-    parentRec.adapter =
-        ParentAdapter(
-            arrayListOf(lateArrayList, existArrayList, doneArrayList),
-            tDao,
-            fragmentPresenter,
-            sectorEntity,
-            sectorPosition,
-            pages,
-            context
-        )
+    pages.sortPages()
+    //Commented part is for dynamically size changes for existing task sector
+
+    /*pages.iterator().forEach {
+        pagesSize.add(getHeight(it.taskList.size))
+    }*/
+
+    val parentAdapter =  ParentAdapter(
+        arrayListOf(lateArrayList, existArrayList, doneArrayList),
+        tDao,
+        fragmentPresenter,
+        sectorEntity,
+        sectorPosition,
+        pages,
+        pagesSize,
+        color,
+        context
+    )
+    val br: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (sectorEntity.id == intent.getLongExtra("sector_id", 0)) {
+                Log.i("AAAAAAAAAA", "AAAAAAAAAAAAA $intent")
+                val pageList = parentAdapter.getPages()
+                val task = TaskEntity.getTaskById(tDao, intent.getLongExtra("id", 0))!!
+                for (i in 0 until pages.size) {
+                    if (layout.isVisible) {
+                        if (pageList[i].taskList.contains(task)) {
+                            pageList[i].taskList.remove(task)
+                            break
+                        }
+                    }
+                }
+                parentAdapter.addToLateTaskList(task)
+                parentAdapter.setPages(parentAdapter.getPages())
+                parentAdapter.notifyItemRangeChanged(0, 2)
+            }
+        }
+    }
+    val filter = IntentFilter()
+    filter.addAction("UPDATE_PAGES")
+    context.registerReceiver(br, filter)
+    parentRec.adapter = parentAdapter
     parentRec.layoutManager = LinearLayoutManager(context)
 }
 
@@ -240,7 +285,7 @@ fun dpToPx(dp: Int): Int {
 }
 
 fun pxToDp(px: Int): Int {
-    return (px / Resources.getSystem().getDisplayMetrics().density).toInt()
+    return (px / Resources.getSystem().displayMetrics.density).toInt()
 }
 
 fun updatedPages(taskEntity: TaskEntity, pages: ArrayList<Page>): ArrayList<Page> {
@@ -249,7 +294,6 @@ fun updatedPages(taskEntity: TaskEntity, pages: ArrayList<Page>): ArrayList<Page
             dayCountSet.add(i.taskList[0].taskDate.withHour(0).withMinute(0).withNano(0).toEpochSecond(
                 ZoneOffset.UTC))
     }
-    dayCountSet.iterator().forEach {  }
     var isFound = false
     for (c in 0 until pages.size) {
         if (dayCountSet[c] == taskEntity.taskDate.withHour(0).withMinute(0).withNano(0).toEpochSecond(
@@ -262,10 +306,56 @@ fun updatedPages(taskEntity: TaskEntity, pages: ArrayList<Page>): ArrayList<Page
     }
     if (!isFound) {
         pages.add(Page(getTime(taskEntity.taskDate), arrayListOf(taskEntity)))
+        pages.sortPages()
     }
     return pages
+}
+fun MutableList<Page>.sortPages() {
+    this.sortBy { it.taskList[0].taskDate }
 }
 fun getTime(localDate: LocalDateTime) : String {
     val pattern = if (localDate.dayOfMonth-10 < 0) "d, MMMM yyyy" else "dd, MMMM yyyy"
     return localDate.format(DateTimeFormatter.ofPattern(pattern))
+}
+fun View.setHeight(positionOffSet: Float, itemCount: Int) {
+    val float = (dpToPx(65) + itemCount * dpToPx(60) * positionOffSet).toInt()
+    if (float > this.layoutParams.height) {
+        this.layoutParams.height = float
+    }
+    //Log.i("Parent Adapter", "Height is $float")
+}
+fun getHeight(itemCount: Int) : Int {
+    return if (itemCount > 2) {
+        dpToPx(210)
+    } else {
+        (dpToPx(55) + itemCount * dpToPx(65))
+    }
+}
+fun View.setHeight(positionOffSet: Float, itemCount: Int, nextItemCount: Int) {
+    println(positionOffSet)
+    val height = 2 * (dpToPx(65) + (nextItemCount * dpToPx(60)) * positionOffSet).toInt()
+    if (nextItemCount > itemCount) {
+        if (height >= this.layoutParams.height) {
+            //Log.i("Parent Adapter", "Up: Height is ${pxToDp(height)}, last was ${this.layoutParams.height}")
+            this.layoutParams.height = pxToDp(height)
+        }
+    } else {
+        if (height < this.layoutParams.height) {
+            //Log.i("Parent Adapter", "Down: Height is ${pxToDp(height)}, last was ${this.layoutParams.height}")
+            this.layoutParams.height = pxToDp(height)
+        }
+    }
+}
+fun getColorBySectorIcon(icon: Int) : Int {
+    var color = R.color.mainColor
+    when (icon) {
+        R.drawable.home_def_dr -> color = R.color.homeColor
+        R.drawable.work_def_dr -> color = R.color.workColor
+        R.drawable.travel_def_dr -> color = R.color.travelColor
+        R.drawable.hobby_def_dr -> color = R.color.hobbyColor
+        R.drawable.market_def_dr -> color = R.color.marketColor
+        R.drawable.study_def_dr -> color = R.color.studyColor
+    }
+    println(color)
+    return color
 }

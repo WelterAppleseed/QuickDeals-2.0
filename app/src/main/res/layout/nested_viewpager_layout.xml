@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="210dp">
+    android:layout_height="wrap_content">
 
-    <com.asksira.loopingviewpager.LoopingViewPager
+    <com.example.fffaaaa.pager.defs.loopingviewpager.LoopingViewPager
         android:id="@+id/looping_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:isInfinite="true"
-        app:scrollInterval="5000"
-        app:layout_constraintDimensionRatio="1.78"/>
+        app:layout_constraintDimensionRatio="1.78"
+        app:scrollInterval="5000" />
 </RelativeLayout>

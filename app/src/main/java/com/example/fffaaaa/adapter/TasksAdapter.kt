@@ -1,22 +1,18 @@
 package com.example.fffaaaa.adapter
 
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.R
-import com.example.fffaaaa.TaskItem
-import com.example.fffaaaa.presenter.FragmentPresenter
-import com.example.fffaaaa.presenter.StartPresenter
-import com.example.fffaaaa.room.SectorEntity
+import com.example.fffaaaa.custom.TaskItem
 import com.example.fffaaaa.room.TDao
 import com.example.fffaaaa.room.TaskEntity
-import kotlinx.android.synthetic.main.task_shablon.view.*
-import java.time.LocalDateTime
+import kotlinx.android.synthetic.main.task_item_layout.view.*
 
 class TasksAdapter(
     var taskList: ArrayList<TaskEntity>,
@@ -38,15 +34,14 @@ class TasksAdapter(
         holder: TasksAdapter.TaskRecyclerViewHolder, position: Int
     ) {
         val taskEntity = taskList[position]
+        holder.radioB.buttonDrawable!!.setColorFilter(parentAdapter.getColor(), PorterDuff.Mode.SRC_IN);
         (holder.itemView as TaskItem).setDate(taskEntity.taskDate, state)
         holder.itemView.setTitle(taskEntity.taskTitle)
         holder.itemView.setTaskItemClickListener(View.OnClickListener {
             taskList.removeAt(position)
             parentAdapter.doneTask(state, taskEntity)
-            println(holder.itemView.parent.parent)
             parentAdapter.replaceContainerBack(
                 if (holder.itemView.parent is RecyclerView) (holder.itemView.parent as RecyclerView) else (holder.itemView.parent.parent as RecyclerView), taskList.size)
-
         })
 
     }
@@ -59,15 +54,17 @@ class TasksAdapter(
 
         val dateTV: TextView
         val taskTV: TextView
+        val radioB: RadioButton
 
         init {
             dateTV = (itemView as TaskItem).getTitleTextView()
             taskTV = itemView.getDateTextView();
+            radioB = itemView.radio
         }
     }
 
     fun insertToList(taskEntity: TaskEntity) {
         taskList.add(taskEntity)
-        notifyDataSetChanged()
+        notifyItemInserted(taskList.size-1)
     }
 }

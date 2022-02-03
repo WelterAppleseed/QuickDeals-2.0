@@ -3,6 +3,7 @@
     package="com.example.fffaaaa">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -20,6 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".notifications.AlarmManagerBroadcastReceiver"
+            android:enabled="true" />
+
+        <service
+            android:name=".notifications.NotificationService"
+            android:enabled="true" />
+
     </application>
 
 </manifest>

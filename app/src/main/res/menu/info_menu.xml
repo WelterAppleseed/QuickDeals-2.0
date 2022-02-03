@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/info"
-            android:icon="@mipmap/ic_launcher_round"
-            android:title="Profile" />
-    </group>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@drawable/menu_dr_wh"
+        android:orderInCategory="3"
+        android:title="Delete"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/delete_it"
+                android:icon="@drawable/delete_dr"
+                android:title="@string/first_infomenu_title" />
+        </menu>
+    </item>
 </menu>

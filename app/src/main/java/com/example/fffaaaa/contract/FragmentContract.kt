@@ -11,7 +11,9 @@ import com.example.fffaaaa.activity.NewReminderFragment
 import com.example.fffaaaa.adapter.SectorAdapter
 import com.example.fffaaaa.presenter.FragmentPresenter
 import com.example.fffaaaa.room.SectorEntity
+import com.example.fffaaaa.room.TaskEntity
 import com.google.android.material.navigation.NavigationView
+import java.time.LocalDateTime
 
 interface FragmentContract {
     interface Presenter {
@@ -23,5 +25,7 @@ interface FragmentContract {
         fun attachComparator(sharedPreferences: SharedPreferences)
         fun updateSectorInfoTaskCount(count: Int)
         fun onExistingTasksCreating() : RecyclerView
+        fun delete(sector: SectorEntity)
+        fun onNotificationEventReceived(taskEntity: TaskEntity, icon: Int)
     }
 }

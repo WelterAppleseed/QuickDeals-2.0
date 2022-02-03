@@ -28,6 +28,7 @@ data class SectorEntity(
     companion object {
         val BY_ID : Comparator<SectorEntity> = Comparator { o1: SectorEntity, o2: SectorEntity ->  o1.id.compareTo(o2.id)}
         val BY_ALPHABET : Comparator<SectorEntity> = Comparator { o1: SectorEntity, o2: SectorEntity ->  o1.title.compareTo(o2.title)}
+        val BY_TASK_COUNT : Comparator<SectorEntity> = Comparator { o1: SectorEntity, o2: SectorEntity ->  o2.remCount.compareTo(o1.remCount)}
         fun insert(dao: SDao, sectorEntity: SectorEntity) {
             runBlocking {
                 val job = GlobalScope.launch(Dispatchers.IO) {

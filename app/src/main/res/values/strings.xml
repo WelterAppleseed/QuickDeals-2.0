@@ -17,5 +17,12 @@
     <string name="done_date_shablon">%d, %s %02d, %02d:%02d</string>
     <string name="date_shablon">%02d:%02d · %s %02%d</string>
     <string name="lists_title">Lists</string>
-
+    <string name="deleting_sector_title">Warning!</string>
+    <string name="deleting_sector_desc">Do you really want to delete this sector?</string>
+    <string name="notification_title">Whoop-whoop!</string>
+    <string name="notification_desc">You have received a "%s" notification. Your note is: %s</string>
+    <string name="first_menu_title">Alphabetical Sort</string>
+    <string name="second_menu_title">Default Sort</string>
+    <string name="third_menu_title">Task Count Sort</string>
+    <string name="first_infomenu_title">Delete</string>
 </resources>

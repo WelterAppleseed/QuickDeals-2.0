@@ -19,6 +19,8 @@ data class TaskEntity(
     var sectorId: Long,
     @ColumnInfo(name = "task_title")
     var taskTitle: String,
+    @ColumnInfo(name = "task_description")
+    var taskDescription: String,
     @ColumnInfo(name = "task_date")
     var taskDate: LocalDateTime,
     @ColumnInfo(name = "is_over")
@@ -49,6 +51,14 @@ data class TaskEntity(
                 runBlocking {
                     val job = GlobalScope.launch(Dispatchers.IO) {
                         dao.delete(taskEntity)
+                    }
+                    job.join()
+                }
+            }
+            fun delete(dao: TDao, taskEntityList: List<TaskEntity>) {
+                runBlocking {
+                    val job = GlobalScope.launch(Dispatchers.IO) {
+                        dao.delete(taskEntityList)
                     }
                     job.join()
                 }

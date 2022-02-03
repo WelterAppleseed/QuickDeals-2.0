@@ -12,4 +12,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#7B7B7B</color>
     <color name="gray_dark">#6D6D6D</color>
+
+    <color name="workColor">#ffbc7c</color>
+    <color name="travelColor">#54d080</color>
+    <color name="studyColor">#8c84d4</color>
+    <color name="homeColor">#dc645c</color>
+    <color name="hobbyColor">#a86bbf</color>
+    <color name="marketColor">#43b3bb</color>
 </resources>

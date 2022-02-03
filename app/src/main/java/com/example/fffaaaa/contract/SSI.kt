@@ -1,6 +1,7 @@
 package com.example.fffaaaa.contract
 
 import android.content.Context
+import android.view.MenuItem
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.presenter.FragmentPresenter
@@ -17,6 +18,7 @@ interface SSI {
         fun taskListDynamicallyUpdate(taskEntity: TaskEntity)
         fun attachSectorInfoPresenter(sectorInfoPresenter: SectorInfoPresenter)
         fun getParentRec() : RecyclerView
+        fun requestSectorDeleting(sector: SectorEntity)
     }
 
     interface Presenter {
@@ -27,5 +29,6 @@ interface SSI {
             context: Context,
             fragmentPresenter: FragmentPresenter
         )
+        fun modifyToolbar(context: Context, menuItem: MenuItem)
     }
 }

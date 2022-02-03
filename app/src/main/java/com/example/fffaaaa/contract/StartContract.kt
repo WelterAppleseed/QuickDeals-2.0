@@ -6,6 +6,8 @@ import com.example.fffaaaa.adapter.SectorAdapter
 import com.example.fffaaaa.presenter.FragmentPresenter
 import com.example.fffaaaa.presenter.StartPresenter
 import com.example.fffaaaa.room.SectorEntity
+import com.example.fffaaaa.room.TaskEntity
+import java.time.LocalDateTime
 
 interface StartContract {
     interface View {
@@ -18,17 +20,7 @@ interface StartContract {
 
         fun updateSectors(position: Int, size: Int)
 
-        fun onSearchResult(sectors: List<SectorEntity>)
-
-        fun showSectorInfoDialog(sectorInfo: String)
-
-        fun hideSectorInfo()
-
-        fun showSectorInfo()
-
-        fun openReminderScreen(sectorId: Long)
-
-        fun openNewReminderScreen()
+        fun updateNotifications(taskEntity: TaskEntity, icon: Int)
     }
     interface Presenter {
         // method to be called when

@@ -1,6 +1,6 @@
 package com.example.fffaaaa.activity
 
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -13,14 +13,20 @@ import com.example.fffaaaa.contract.FragmentInterface
 import com.example.fffaaaa.contract.NavigationContract
 import com.example.fffaaaa.contract.SSI
 import com.example.fffaaaa.contract.StartContract
+import com.example.fffaaaa.notifications.NotificationUtils
 import com.example.fffaaaa.presenter.*
-import com.example.fffaaaa.room.SDao
-import com.example.fffaaaa.room.SDatabase
-import com.example.fffaaaa.room.SectorEntity
-import com.example.fffaaaa.room.TDao
+import com.example.fffaaaa.room.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.create_reminer_two.*
 import kotlinx.android.synthetic.main.create_reminer_two.view.*
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import android.util.Log
+
+import com.example.fffaaaa.notifications.AlarmManagerBroadcastReceiver
+
+
+
 
 class MainActivity : AppCompatActivity(),
     StartContract.View, FragmentInterface.View {
@@ -36,16 +42,6 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        /* setSupportActionBar(tb)
-         val actionBar: ActionBar? = supportActionBar
-         actionBar?.apply {
-             setDisplayHomeAsUpEnabled(true)
-             setHomeAsUpIndicator(R.drawable.menu_small)
-             title = "QuickDeals"
-         }
-         tb.setNavigationOnClickListener {
-
-         }*/
         tb.setOnMenuItemClickListener { it ->
             fragmentPresenter?.toolbarModify(pref, it)
             return@setOnMenuItemClickListener true
@@ -84,7 +80,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun showNewSector(position: Int, size: Int) {
-        sectorRview.adapter?.notifyItemRangeChanged(0, size)
+        sectorRview.adapter?.notifyItemRangeChanged(position, size)
         sectorRview.adapter?.notifyItemInserted(position)
     }
 
@@ -94,31 +90,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun updateSectors(position: Int, size: Int) {
-        sectorRview.adapter?.notifyItemRangeChanged(0, size)
+        sectorRview.adapter?.notifyItemRangeChanged(position, size)
         sectorRview.adapter?.notifyItemChanged(position)
     }
-
-    override fun onSearchResult(sectors: List<SectorEntity>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun showSectorInfoDialog(sectorInfo: String) {
-    }
-
-    override fun hideSectorInfo() {
-        TODO("Not yet implemented")
-    }
-
-    override fun showSectorInfo() {
-        TODO("Not yet implemented")
-    }
-
-    override fun openReminderScreen(sectorId: Long) {
-        Toast.makeText(this.baseContext, "ALALLALA", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun openNewReminderScreen() {
-        //startActivityForResult(NewReminderFragment.buildIntent(this, dao), NEW_NOTE_RESULT_CODE)
+    override fun updateNotifications(taskEntity: TaskEntity, icon: Int) {
+        NotificationUtils().setNotification(taskEntity, icon, this)
     }
 
     override fun update(newRemFragment: Fragment, secInfoFragment: Fragment) {
@@ -131,6 +107,7 @@ class MainActivity : AppCompatActivity(),
         if (secInfoFragment is SSI.View && secInfoFragment is NavigationContract.View) {
             navigationPresenter?.let { secInfoFragment.attachNavigationPresenter(it) }
             sectorInfoPresenter?.let { secInfoFragment.attachSectorInfoPresenter(it) }
+            fragmentPresenter?.let { secInfoFragment.attachFragmentPresenter(it) }
             supportFragmentManager.beginTransaction()
                 .replace(com.example.fffaaaa.R.id.sector_info_fragment, secInfoFragment)
                 .hide(secInfoFragment).commit()
@@ -138,10 +115,30 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun hide(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().hide(fragment).commit()
+        supportFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim)
+            .addToBackStack(null)
+            .hide(fragment)
+            .commit()
     }
 
     override fun show(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().show(fragment).commit()
+        supportFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(R.anim.nav_default_enter_anim, R.anim.nav_default_exit_anim, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim)
+            .addToBackStack(null)
+            .show(fragment)
+            .commit()
+    }
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        AlarmManagerBroadcastReceiver.isWorking = hasFocus
+        super.onWindowFocusChanged(hasFocus)
+    }
+    override fun onBackPressed() {
+        val homeIntent = Intent(Intent.ACTION_MAIN)
+        homeIntent.addCategory(Intent.CATEGORY_HOME)
+        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        startActivity(homeIntent)
     }
 }

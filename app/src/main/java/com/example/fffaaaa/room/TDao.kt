@@ -14,6 +14,9 @@ interface TDao {
     @Delete
     fun delete(taskEntity: TaskEntity)
 
+    @Delete
+    fun delete(taskEntityList: List<TaskEntity>)
+
     @Query("SELECT * FROM tasks WHERE sector_id =:id")
     fun getTaskListBySectorId(id: Long) : List<TaskEntity>
 

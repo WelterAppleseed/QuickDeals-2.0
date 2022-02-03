@@ -1,21 +1,17 @@
 package com.example.fffaaaa.adapter
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.asksira.loopingviewpager.LoopingPagerAdapter
 import com.example.fffaaaa.R
 import com.example.fffaaaa.room.TDao
 import android.view.MotionEvent
-import android.widget.AbsListView
-import com.example.fffaaaa.getTime
-import android.R.string.no
 import com.example.fffaaaa.dpToPx
+import com.example.fffaaaa.pager.defs.loopingviewpager.LoopingPagerAdapter
 
 
 class DemoInfiniteAdapter(
@@ -27,13 +23,24 @@ class DemoInfiniteAdapter(
 ) : LoopingPagerAdapter<Page>(itemList, isInfinite) {
 
     //This method will be triggered if the item View has not been inflated before.
+    var viewList: MutableSet<View> = mutableSetOf()
+    private var itemCount: MutableSet<Int> = mutableSetOf()
+    fun getItemHeight(position: Int) : Int {
+        println("${itemCount.size} and ${itemCount.elementAt(position)}")
+        return dpToPx(55) + dpToPx(65) * itemCount.elementAt(position)
+    }
+
     override fun inflateView(
         viewType: Int,
         container: ViewGroup,
         listPosition: Int
     ): View {
-        return LayoutInflater.from(container.context)
+
+        val view = LayoutInflater.from(container.context)
             .inflate(R.layout.nested_into_viewpager_recycler, container, false)
+        view.tag = listPosition
+        viewList.add(view)
+        return view
     }
 
     //Bind your data with your item View here.
@@ -64,12 +71,18 @@ class DemoInfiniteAdapter(
                 }
             return@OnTouchListener true
         })
-        val observer = object : RecyclerView.AdapterDataObserver() {
-            override fun onChanged() {
-                adapter.updateSectorCount(true)
-                adapter.notifyDataSetChanged()
-            }
-        }
-        (recycler.adapter as TasksAdapter).registerAdapterDataObserver(observer)
     }
+   /* fun resetHeight(viewPager: LoopingViewPager, current: Int) {
+        this.current = current
+        if (viewPager.childCount > current) {
+            var layoutParams = viewPager.layoutParams as LinearLayout.LayoutParams?
+            if (layoutParams == null) {
+                layoutParams =
+                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, viewHeight)
+            } else {
+                layoutParams.height = viewHeight
+            }
+            setLayoutParams(layoutParams)
+        }
+    }*/
 }

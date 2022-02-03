@@ -4,13 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="170dp"
     android:layout_gravity="center"
-    android:layout_margin="5dp"
+    android:layout_margin="10dp"
     android:clickable="true"
     android:focusable="true"
-    android:background="@color/white"
     android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="5dp"
-    app:cardElevation="5dp">
+    app:cardElevation="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,8 +20,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
             android:orientation="vertical">
 
             <ImageView
@@ -37,17 +36,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/ops_semibold"
-                android:textColor="@color/black"
                 android:text="@string/app_name"
+                android:textColor="@color/black"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/sectorNotesCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray"
                 android:fontFamily="@font/ops_reg"
                 android:text="@string/app_name"
+                android:textColor="@color/gray"
                 android:textSize="16sp" />
         </LinearLayout>
 

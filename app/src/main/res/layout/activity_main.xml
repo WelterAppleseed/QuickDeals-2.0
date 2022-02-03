@@ -8,111 +8,95 @@
     android:background="@color/subMainColor2"
     tools:context=".activity.MainActivity">
 
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawer"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <FrameLayout
+            <LinearLayout
+                android:id="@+id/start_page"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/subMainColor2"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/start_page"
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/tb"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/subMainColor2"
-                    android:orientation="vertical">
-
-                    <androidx.appcompat.widget.Toolbar
-                        android:id="@+id/tb"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="?attr/actionBarSize"
-                        android:theme="?attr/actionBarTheme"
-                        app:menu="@menu/menu">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="25dp"
-                            android:fontFamily="@font/ops_reg"
-                            android:text="@string/app_name"
-                            android:textColor="@color/black"
-                            android:textSize="24sp"
-                            android:textStyle="bold" />
-
-                    </androidx.appcompat.widget.Toolbar>
+                    android:layout_height="wrap_content"
+                    android:minHeight="?attr/actionBarSize"
+                    android:theme="?attr/actionBarTheme"
+                    app:menu="@menu/menu">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="25dp"
-                        android:layout_marginTop="30dp"
-                        android:text="@string/lists_title"
+                        android:fontFamily="@font/ops_reg"
+                        android:text="@string/app_name"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/ops_semibold"
-                        android:textSize="36sp" />
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/sectorRview"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginRight="20dp">
+                </androidx.appcompat.widget.Toolbar>
 
-                    </androidx.recyclerview.widget.RecyclerView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="@font/ops_semibold"
+                    android:text="@string/lists_title"
+                    android:textColor="@color/black"
+                    android:textSize="36sp" />
 
-                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/sectorRview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginRight="20dp">
 
-            </FrameLayout>
+                </androidx.recyclerview.widget.RecyclerView>
 
-            <FrameLayout
-                android:id="@+id/sector_info_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            </LinearLayout>
 
-            </FrameLayout>
-
-            <com.melnykov.fab.FloatingActionButton
-                android:id="@+id/addButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="20dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:srcCompat="@drawable/ic_launcher_foreground"
-                tools:ignore="SpeakableTextPresentCheck" />
-
-        </RelativeLayout>
+        </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/new_rem_fragment"
+            android:id="@+id/sector_info_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         </FrameLayout>
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_view"
+        <com.melnykov.fab.FloatingActionButton
+            android:id="@+id/addButton"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:menu="@menu/menu">
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="@drawable/add_dr"
+            android:foregroundGravity="center"
+            tools:ignore="SpeakableTextPresentCheck" />
 
-        </com.google.android.material.navigation.NavigationView>
+    </RelativeLayout>
 
-    </androidx.drawerlayout.widget.DrawerLayout>
+    <FrameLayout
+        android:id="@+id/new_rem_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

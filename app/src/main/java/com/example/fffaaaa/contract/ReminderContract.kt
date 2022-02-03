@@ -24,9 +24,11 @@ interface ReminderContract {
         fun transit(up: Boolean)
 
         fun onSortList(list: ArrayList<SectorEntity>)
+
+        fun onNotificationCreating(taskEntity: TaskEntity, icon: Int)
     }
     interface Presenter {
-        fun onAddReminderButton(id : Long, icon : Int, title: String, remCount: Int, taskTitle: String, localDateTime: LocalDateTime)
+        fun onAddReminderButton(id : Long, icon : Int, title: String, remCount: Int, taskTitle: String,  taskDescription: String, localDateTime: LocalDateTime)
 
         fun onDateTextViewClicked(context: Context, textView: TextView)
 
