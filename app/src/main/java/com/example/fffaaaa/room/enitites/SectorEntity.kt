@@ -1,16 +1,10 @@
-package com.example.fffaaaa.room
+package com.example.fffaaaa.room.enitites
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.fffaaaa.contract.StartContract
+import com.example.fffaaaa.room.daos.SDao
 import kotlinx.coroutines.*
-import java.lang.Exception
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
 
 
 @Entity(tableName = "sectors")
@@ -29,6 +23,7 @@ data class SectorEntity(
         val BY_ID : Comparator<SectorEntity> = Comparator { o1: SectorEntity, o2: SectorEntity ->  o1.id.compareTo(o2.id)}
         val BY_ALPHABET : Comparator<SectorEntity> = Comparator { o1: SectorEntity, o2: SectorEntity ->  o1.title.compareTo(o2.title)}
         val BY_TASK_COUNT : Comparator<SectorEntity> = Comparator { o1: SectorEntity, o2: SectorEntity ->  o2.remCount.compareTo(o1.remCount)}
+        @DelicateCoroutinesApi
         fun insert(dao: SDao, sectorEntity: SectorEntity) {
             runBlocking {
                 val job = GlobalScope.launch(Dispatchers.IO) {
@@ -38,6 +33,7 @@ data class SectorEntity(
             }
         }
 
+        @DelicateCoroutinesApi
         fun update(dao: SDao, sectorEntity: SectorEntity) {
             runBlocking {
                 val job = GlobalScope.launch(Dispatchers.IO) {
@@ -47,6 +43,7 @@ data class SectorEntity(
             }
         }
 
+        @DelicateCoroutinesApi
         fun delete(dao: SDao, sectorEntity: SectorEntity) {
             runBlocking {
                 val job = GlobalScope.launch(Dispatchers.IO) {
@@ -56,6 +53,7 @@ data class SectorEntity(
             }
         }
 
+        @DelicateCoroutinesApi
         fun findSectorById(dao: SDao, id: Long): SectorEntity? {
             var sectorEntity: SectorEntity? = null
             runBlocking {
@@ -69,6 +67,7 @@ data class SectorEntity(
         }
 
 
+        @DelicateCoroutinesApi
         fun getAllSectors(dao: SDao): ArrayList<SectorEntity> {
            var list: List<SectorEntity> = arrayListOf()
             runBlocking {
@@ -80,6 +79,7 @@ data class SectorEntity(
             return ArrayList(list)
         }
 
+        @DelicateCoroutinesApi
         fun getAllSectorTitles(dao: SDao): ArrayList<String> {
             val list: ArrayList<String> = arrayListOf()
             runBlocking {
@@ -93,6 +93,7 @@ data class SectorEntity(
             return list
         }
 
+        @DelicateCoroutinesApi
         fun deleteAll(dao: SDao) {
             runBlocking {
                 val job = GlobalScope.launch(Dispatchers.IO) {
@@ -101,6 +102,7 @@ data class SectorEntity(
                 job.join()
             }
         }
+        @DelicateCoroutinesApi
         fun getSectorTaskCount(dao: SDao, title: String): Int {
             var taskCount = -1
             runBlocking {
@@ -111,6 +113,7 @@ data class SectorEntity(
             }
             return taskCount
         }
+        @DelicateCoroutinesApi
         fun getSectorsSortedByName(dao: SDao, isAsc : Int?): ArrayList<String> {
             var list: ArrayList<String> = arrayListOf()
             runBlocking {

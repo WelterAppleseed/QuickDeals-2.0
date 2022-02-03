@@ -1,10 +1,9 @@
 package com.example.fffaaaa.contract
 
 import android.content.Context
-import android.widget.ScrollView
 import android.widget.TextView
-import com.example.fffaaaa.room.SectorEntity
-import com.example.fffaaaa.room.TaskEntity
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.enitites.TaskEntity
 import java.time.LocalDateTime
 
 interface ReminderContract {
@@ -18,8 +17,6 @@ interface ReminderContract {
         fun updateCategory()
 
         fun onSectorSaved(sector: SectorEntity, position: Int, taskEntity: TaskEntity)
-
-        fun openSectorScreen(sectorId: Long)
 
         fun transit(up: Boolean)
 

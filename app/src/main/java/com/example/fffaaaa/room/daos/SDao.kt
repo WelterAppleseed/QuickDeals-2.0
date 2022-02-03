@@ -1,6 +1,7 @@
-package com.example.fffaaaa.room
+package com.example.fffaaaa.room.daos
 
 import androidx.room.*
+import com.example.fffaaaa.room.enitites.SectorEntity
 
 @Dao
 interface SDao {

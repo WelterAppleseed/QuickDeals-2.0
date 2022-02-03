@@ -1,4 +1,4 @@
-package com.example.fffaaaa
+package com.example.fffaaaa.custom
 
 import android.app.Activity
 import android.content.Intent
@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import kotlinx.android.synthetic.main.category_picker_dialog.*
+import com.example.fffaaaa.R
 import kotlinx.android.synthetic.main.category_picker_dialog.view.*
 
 class CategoryDialog : DialogFragment(), View.OnClickListener{

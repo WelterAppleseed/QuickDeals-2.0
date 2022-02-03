@@ -1,7 +1,6 @@
 package com.example.fffaaaa.contract
 
 import androidx.fragment.app.Fragment
-import com.example.fffaaaa.activity.NewReminderFragment
 
 interface FragmentInterface {
     interface View {

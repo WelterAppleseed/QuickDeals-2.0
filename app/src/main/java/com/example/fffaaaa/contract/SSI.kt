@@ -6,10 +6,8 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.presenter.FragmentPresenter
 import com.example.fffaaaa.presenter.SectorInfoPresenter
-import com.example.fffaaaa.room.SectorEntity
-import com.example.fffaaaa.room.TDao
-import com.example.fffaaaa.room.TaskEntity
-import java.util.*
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.enitites.TaskEntity
 
 interface SSI {
     interface View {

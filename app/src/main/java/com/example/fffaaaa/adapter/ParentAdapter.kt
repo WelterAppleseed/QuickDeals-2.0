@@ -10,25 +10,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.R
 import com.example.fffaaaa.presenter.FragmentPresenter
-import com.example.fffaaaa.room.SectorEntity
-import com.example.fffaaaa.room.TDao
-import com.example.fffaaaa.room.TaskEntity
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.daos.TDao
+import com.example.fffaaaa.room.enitites.TaskEntity
 import android.widget.RelativeLayout
 import androidx.viewpager.widget.ViewPager
 import com.example.fffaaaa.dpToPx
 import com.example.fffaaaa.getTime
 import java.time.LocalDateTime
 import android.view.ViewGroup
+import com.example.fffaaaa.model.Page
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 
-open class ParentAdapter(
+open class ParentAdapter @DelicateCoroutinesApi constructor(
     private var fullTasksList: List<ArrayList<TaskEntity>>,
     private var tDao: TDao,
     private var fragmentPresenter: FragmentPresenter,
     private var sectorEntity: SectorEntity,
     private var sectorPosition: Int,
     private var pages: ArrayList<Page>,
-    pagesSizes: ArrayList<Int>,
+    pagesSizes: ArrayList<Int>, /*pagesSized could be used for dynamically size-changing of second sector*/
     private val color: Int,
     private var context: Context
 ) :
@@ -38,8 +40,8 @@ open class ParentAdapter(
         internal const val VIEW_TYPE_RECYCLER = 0
         internal const val VIEW_TYPE_PAGES = 1
         internal const val VIEW_TYPE_RECYCLER2 = 2
-        private val contentTitles = listOf<String>("Late", "Today", "Done")
-        private var lastPosition = 0
+        private val contentTitles = listOf("Late", "Today", "Done")
+        //private var lastPosition = 0 /*last position could be used for dynamically size-changing of second sector*/
         lateinit var defaultParams: ViewGroup.LayoutParams
     }
 
@@ -79,7 +81,7 @@ open class ParentAdapter(
         }
     }
     fun addToLateTaskList(taskEntity: TaskEntity) {
-        fullTasksList[ParentAdapter.VIEW_TYPE_RECYCLER].add(taskEntity)
+        fullTasksList[VIEW_TYPE_RECYCLER].add(taskEntity)
     }
 
     fun removeFromFullTaskList(taskEntity: TaskEntity) {
@@ -91,11 +93,13 @@ open class ParentAdapter(
         }
     }
 
+    @DelicateCoroutinesApi
     fun updateSectorCount(up: Boolean) {
         if (up) sectorEntity.remCount++ else sectorEntity.remCount--
         fragmentPresenter.updateSectorInfoTaskCount(sectorEntity.remCount)
     }
 
+    @DelicateCoroutinesApi
     private var parentRecycler = fragmentPresenter.onExistingTasksCreating()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -117,19 +121,20 @@ open class ParentAdapter(
         return viewHolder!!
     }
 
+    @DelicateCoroutinesApi
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder.itemViewType) {
             VIEW_TYPE_RECYCLER -> {
-                var pageHolder = holder as RecyclerItemHolder
-                pageHolder.bind(VIEW_TYPE_RECYCLER, tDao)
+                val pageHolder = holder as RecyclerItemHolder
+                pageHolder.bind(VIEW_TYPE_RECYCLER)
             }
             VIEW_TYPE_PAGES -> {
-                var pageHolder = holder as ViewPagerItemHolder
+                val pageHolder = holder as ViewPagerItemHolder
                 pageHolder.bind(pages, tDao)
             }
             VIEW_TYPE_RECYCLER2 -> {
-                var pageHolder = holder as RecyclerItemHolder
-                pageHolder.bind(VIEW_TYPE_RECYCLER2, tDao)
+                val pageHolder = holder as RecyclerItemHolder
+                pageHolder.bind(VIEW_TYPE_RECYCLER2)
             }
         }
     }
@@ -140,6 +145,7 @@ open class ParentAdapter(
         return position
     }
 
+    @DelicateCoroutinesApi
     fun doneTask(state: Int, taskEntity: TaskEntity) {
         Log.i("ParentAdapter", "Done task.")
         fullTasksList[state].remove(taskEntity)
@@ -219,20 +225,18 @@ open class ParentAdapter(
         }
     }
 
-    /**
-     * [RecyclerView.ViewHolder] holding nested [RecyclerItemHolder]
-     */
+
     inner class RecyclerItemHolder(view: View) : RecyclerView.ViewHolder(view) {
-        //val childAdapter = TasksAdapter(fullTasksList[], style, tDao, this@ParentAdapter)
-        var contentTitle: TextView = view.findViewById<View>(R.id.content_title) as TextView
+        private var contentTitle: TextView = view.findViewById<View>(R.id.content_title) as TextView
         var childRecyclerView: RecyclerView = view.findViewById(R.id.child_recycler_view)
 
 
+        @DelicateCoroutinesApi
         @SuppressLint("ClickableViewAccessibility")
-        fun bind(style: Int, tDao: TDao) {
+        fun bind(style: Int) {
             contentTitle.text = contentTitles[style]
             val childAdapter =
-                TasksAdapter(fullTasksList[style], style, tDao, this@ParentAdapter)
+                TasksAdapter(fullTasksList[style], style, this@ParentAdapter)
             childRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
             childRecyclerView.adapter = childAdapter
             if (fullTasksList[style].size != 0) {
@@ -240,12 +244,12 @@ open class ParentAdapter(
                     if (fullTasksList[style].size > 2) {
                         replaceContainer(childRecyclerView, fullTasksList[style].size)
                     }
-                    childRecyclerView.setOnTouchListener(View.OnTouchListener { v, event ->
+                    childRecyclerView.setOnTouchListener(View.OnTouchListener { _, event ->
                         if ((childRecyclerView.adapter as TasksAdapter).itemCount > 2) {
                             if (event?.action == MotionEvent.ACTION_UP) {
-                                parentRecycler.requestDisallowInterceptTouchEvent(false);
+                                parentRecycler.requestDisallowInterceptTouchEvent(false)
                             } else {
-                                parentRecycler.requestDisallowInterceptTouchEvent(true);
+                                parentRecycler.requestDisallowInterceptTouchEvent(true)
                             }
                         }
                         return@OnTouchListener true
@@ -256,31 +260,29 @@ open class ParentAdapter(
                                 childRecyclerView,
                                 (childRecyclerView.adapter as TasksAdapter).itemCount
                             )
-                            notifyDataSetChanged()
+                            notifyItemInserted((childRecyclerView.adapter as TasksAdapter).itemCount-1)
                         }
                     }
                     (childRecyclerView.adapter as TasksAdapter).registerAdapterDataObserver(observer)
                 }
             } else {
                 if (style != VIEW_TYPE_RECYCLER2) {
-                    val childAdapter = EmptyAdapter(context)
+                    val emptyAdapter = EmptyAdapter(context)
                     childRecyclerView.layoutManager = LinearLayoutManager(itemView.context)
-                    childRecyclerView.adapter = childAdapter
+                    childRecyclerView.adapter = emptyAdapter
                     childRecyclerView.setOnTouchListener(null)
                 }
             }
         }
     }
 
-    /**
-     * [RecyclerView.ViewHolder] holding nested [SquareViewPager]
-     */
     inner class ViewPagerItemHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var viewPager: ViewPager = view.findViewById(R.id.looping_view_pager)
+        private var viewPager: ViewPager = view.findViewById(R.id.looping_view_pager)
+        @DelicateCoroutinesApi
         fun bind(pages: ArrayList<Page>, tDao: TDao) {
             if (pages.isEmpty()) {
                 Log.i("Parent Adapter", "Pages are empty")
-                pages.add(Page(getTime(LocalDateTime.now()), arrayListOf<TaskEntity>()))
+                pages.add(Page(getTime(LocalDateTime.now()), arrayListOf()))
             }
             /*viewPager.setHeight(1F, pages[0].taskList.size)
             val adapter = DemoInfiniteAdapter(

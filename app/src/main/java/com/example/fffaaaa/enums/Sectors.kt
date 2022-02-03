@@ -1,4 +1,4 @@
-package com.example.fffaaaa
+package com.example.fffaaaa.enums
 
 enum class Sectors {
     VARIOUS,

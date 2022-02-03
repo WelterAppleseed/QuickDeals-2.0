@@ -2,16 +2,16 @@ package com.example.fffaaaa.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.R
-import com.example.fffaaaa.room.TDao
-import android.view.MotionEvent
-import com.example.fffaaaa.dpToPx
-import com.example.fffaaaa.pager.defs.loopingviewpager.LoopingPagerAdapter
+import com.example.fffaaaa.model.Page
+import com.example.fffaaaa.pager.LoopingPagerAdapter
+import com.example.fffaaaa.room.daos.TDao
 
 
 class DemoInfiniteAdapter(
@@ -21,14 +21,17 @@ class DemoInfiniteAdapter(
     var adapter: ParentAdapter,
     var parent: RecyclerView
 ) : LoopingPagerAdapter<Page>(itemList, isInfinite) {
+    private var viewList: MutableSet<View> = mutableSetOf()
 
-    //This method will be triggered if the item View has not been inflated before.
-    var viewList: MutableSet<View> = mutableSetOf()
+    // Commented part is for dynamically size-changing of "existing tasks"-sector
+
+    /*
     private var itemCount: MutableSet<Int> = mutableSetOf()
+
     fun getItemHeight(position: Int) : Int {
         println("${itemCount.size} and ${itemCount.elementAt(position)}")
         return dpToPx(55) + dpToPx(65) * itemCount.elementAt(position)
-    }
+    }*/
 
     override fun inflateView(
         viewType: Int,
@@ -44,9 +47,9 @@ class DemoInfiniteAdapter(
     }
 
     //Bind your data with your item View here.
-    //Below is just an example in the demo app.
-    //You can assume convertView will not be null here.
-    //You may also consider using a ViewHolder pattern.
+//Below is just an example in the demo app.
+//You can assume convertView will not be null here.
+//You may also consider using a ViewHolder pattern.
     @SuppressLint("ClickableViewAccessibility")
     override fun bindView(
         convertView: View,
@@ -55,34 +58,34 @@ class DemoInfiniteAdapter(
     ) {
         convertView.findViewById<TextView>(R.id.inf_page_content_title).text =
             itemList?.get(listPosition)?.title
-        var recycler = convertView.findViewById<RecyclerView>(R.id.nested_recycler_view)
+        val recycler = convertView.findViewById<RecyclerView>(R.id.nested_recycler_view)
         val childAdapter =
-            itemList?.get(listPosition)?.taskList?.let { TasksAdapter(it, 1, tDao, adapter) }
+            itemList?.get(listPosition)?.taskList?.let { TasksAdapter(it, 1, adapter) }
         recycler.layoutManager = LinearLayoutManager(convertView.context)
         recycler.adapter = childAdapter
         recycler.isVerticalFadingEdgeEnabled = true
-        recycler.setOnTouchListener(View.OnTouchListener { v, event ->
-                if (itemList?.get(listPosition)?.taskList?.size!! > 2) {
-                    if (event?.action == MotionEvent.ACTION_UP) {
-                        parent.requestDisallowInterceptTouchEvent(false);
-                    } else {
-                        parent.requestDisallowInterceptTouchEvent(true);
-                    }
+        recycler.setOnTouchListener(View.OnTouchListener { _, event ->
+            if (itemList?.get(listPosition)?.taskList?.size!! > 2) {
+                if (event?.action == MotionEvent.ACTION_UP) {
+                    parent.requestDisallowInterceptTouchEvent(false)
+                } else {
+                    parent.requestDisallowInterceptTouchEvent(true)
                 }
+            }
             return@OnTouchListener true
         })
     }
-   /* fun resetHeight(viewPager: LoopingViewPager, current: Int) {
-        this.current = current
-        if (viewPager.childCount > current) {
-            var layoutParams = viewPager.layoutParams as LinearLayout.LayoutParams?
-            if (layoutParams == null) {
-                layoutParams =
-                    LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, viewHeight)
-            } else {
-                layoutParams.height = viewHeight
-            }
-            setLayoutParams(layoutParams)
-        }
-    }*/
+/* fun resetHeight(viewPager: LoopingViewPager, current: Int) {
+   this.current = current
+   if (viewPager.childCount > current) {
+       var layoutParams = viewPager.layoutParams as LinearLayout.LayoutParams?
+       if (layoutParams == null) {
+           layoutParams =
+               LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, viewHeight)
+       } else {
+           layoutParams.height = viewHeight
+       }
+       setLayoutParams(layoutParams)
+   }
+}*/
 }

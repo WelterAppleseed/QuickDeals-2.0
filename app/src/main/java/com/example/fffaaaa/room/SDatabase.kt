@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.fffaaaa.room.daos.SDao
+import com.example.fffaaaa.room.daos.TDao
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.enitites.TaskEntity
 
 @Database(entities = [SectorEntity::class, TaskEntity::class], version = 1, exportSchema = true)
 abstract class SDatabase : RoomDatabase() {

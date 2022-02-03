@@ -1,9 +1,6 @@
-package com.example.fffaaaa
+package com.example.fffaaaa.observer
 
-import android.R
-import android.media.Image
 import android.util.Log
-
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.ScrollView
@@ -13,7 +10,7 @@ class ScrollPositionObserver(private var mScrollView: ScrollView, private var mP
     private val mImageViewHeight: Int = imageHeight
     override fun onScrollChanged() {
         Log.i("Function", "")
-        val scrollY = Math.min(Math.max(mScrollView.scrollY, 0), mImageViewHeight)
+        val scrollY = mScrollView.scrollY.coerceAtLeast(0).coerceAtMost(mImageViewHeight)
 
         // changing position of ImageView
         mPhotoIV.translationY = (scrollY / 2).toFloat()

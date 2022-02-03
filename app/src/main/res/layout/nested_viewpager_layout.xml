@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.example.fffaaaa.pager.defs.loopingviewpager.LoopingViewPager
+    <com.example.fffaaaa.pager.LoopingViewPager
         android:id="@+id/looping_view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

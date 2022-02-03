@@ -1,10 +1,8 @@
-package com.example.fffaaaa.room
+package com.example.fffaaaa.room.converter
 
 import androidx.room.TypeConverter
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.*
 
 class DateConverter {
     @TypeConverter

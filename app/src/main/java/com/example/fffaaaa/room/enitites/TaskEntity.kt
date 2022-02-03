@@ -1,14 +1,10 @@
-package com.example.fffaaaa.room
+package com.example.fffaaaa.room.enitites
 
 import androidx.room.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
+import com.example.fffaaaa.room.converter.DateConverter
+import com.example.fffaaaa.room.daos.TDao
+import kotlinx.coroutines.*
 import java.time.LocalDateTime
-import java.util.*
-import kotlin.Comparator
 
 @Entity(tableName = "tasks")
 @TypeConverters(value = [DateConverter::class])
@@ -27,6 +23,7 @@ data class TaskEntity(
     var isOver: Boolean
 ) {
     companion object {
+            @DelicateCoroutinesApi
             fun insert(dao: TDao, taskEntity : TaskEntity) : Long{
                 var id: Long = 0
                 runBlocking {
@@ -38,6 +35,7 @@ data class TaskEntity(
                 return id
             }
 
+            @DelicateCoroutinesApi
             fun update(dao: TDao, taskEntity: TaskEntity) {
                 runBlocking {
                     val job = GlobalScope.launch(Dispatchers.IO) {
@@ -47,6 +45,7 @@ data class TaskEntity(
                 }
             }
 
+            @DelicateCoroutinesApi
             fun delete(dao: TDao, taskEntity: TaskEntity) {
                 runBlocking {
                     val job = GlobalScope.launch(Dispatchers.IO) {
@@ -55,6 +54,7 @@ data class TaskEntity(
                     job.join()
                 }
             }
+            @DelicateCoroutinesApi
             fun delete(dao: TDao, taskEntityList: List<TaskEntity>) {
                 runBlocking {
                     val job = GlobalScope.launch(Dispatchers.IO) {
@@ -63,6 +63,7 @@ data class TaskEntity(
                     job.join()
                 }
             }
+        @DelicateCoroutinesApi
         fun getTaskListBySectorId(id: Long, dao: TDao) : List<TaskEntity> {
             var list : List<TaskEntity> = listOf()
             runBlocking {
@@ -73,6 +74,7 @@ data class TaskEntity(
             }
             return list
         }
+        @DelicateCoroutinesApi
         fun getFreshTaskList(id: Long, dao: TDao) : List<TaskEntity> {
             var list : List<TaskEntity> = listOf()
             runBlocking {
@@ -83,6 +85,7 @@ data class TaskEntity(
             }
             return list
         }
+        @DelicateCoroutinesApi
         fun getTaskById(dao: TDao, id: Long) : TaskEntity? {
             var taskEntity: TaskEntity? = null
             runBlocking {

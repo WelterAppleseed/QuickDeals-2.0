@@ -32,8 +32,7 @@ class TaskItem : RelativeLayout {
             field = title
             invalidate()
         }
-    private val dateText: String? = null
-    var visualState = LATE
+    private var visualState = LATE
         set(state) {
             field = state
             invalidate()
@@ -125,11 +124,11 @@ class TaskItem : RelativeLayout {
     }
 
     fun setTaskItemClickListener(clickListener: OnClickListener) {
-        radioButton.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { radioButton, _ ->
+        radioButton.setOnCheckedChangeListener { radioButton, _ ->
             radioButton.isChecked = true
             radioButton.isFocusable = false
             radioButton.isEnabled = false
-        })
+        }
         radioButton.setOnClickListener(clickListener)
     }
 

@@ -2,55 +2,49 @@
 
 package com.example.fffaaaa
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Resources
-import android.graphics.Rect
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.adapter.ParentAdapter
-import com.example.fffaaaa.room.SectorEntity
-import com.example.fffaaaa.room.TDao
-import com.example.fffaaaa.room.TaskEntity
+import com.example.fffaaaa.enums.Month
+import com.example.fffaaaa.enums.Sectors
+import com.example.fffaaaa.fragments.NewReminderFragment
+import com.example.fffaaaa.model.Page
+import com.example.fffaaaa.presenter.FragmentPresenter
+import com.example.fffaaaa.room.daos.TDao
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.enitites.TaskEntity
+import kotlinx.coroutines.DelicateCoroutinesApi
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatterBuilder
 import java.util.*
-import android.view.ViewGroup
-
-import android.view.View
-
-import android.view.View.OnTouchListener
-
-import com.example.fffaaaa.activity.NewReminderFragment
-import com.example.fffaaaa.contract.KeyboardInterface
-import com.example.fffaaaa.adapter.Page
-import com.example.fffaaaa.presenter.FragmentPresenter
-import kotlin.collections.ArrayList
-import android.content.IntentFilter
-
-import android.content.Intent
-
-import android.content.BroadcastReceiver
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.isVisible
-import kotlinx.android.synthetic.main.category_picker_dialog.view.*
 
 
 fun getSectorId(title: String): Long {
     return Sectors.valueOf(title.uppercase()).ordinal.toLong()
 }
 
+@DelicateCoroutinesApi
 fun updateSectorInfo(
     layout: LinearLayout,
     taskList: List<TaskEntity>,
@@ -76,11 +70,11 @@ fun updateSectorInfo(
     sectorInfoTaskCountTV.text =
         context.getString(R.string.task_count_text, sectorEntity.remCount)
 
-    var lateArrayList = arrayListOf<TaskEntity>()
-    var existArrayList = arrayListOf<TaskEntity>()
-    var doneArrayList = arrayListOf<TaskEntity>()
+    val lateArrayList = arrayListOf<TaskEntity>()
+    val existArrayList = arrayListOf<TaskEntity>()
+    val doneArrayList = arrayListOf<TaskEntity>()
 
-    var dayCountSet = mutableSetOf<Long>()
+    val dayCountSet = mutableSetOf<Long>()
 
     val parentRec: RecyclerView = layout.findViewById(R.id.parent_rec)
     for (taskEntity in taskList) {
@@ -174,8 +168,8 @@ fun getDatePickerDialog(context: Context, textView: TextView): DatePickerDialog 
     val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
     val startMinute = currentDateTime.get(Calendar.MINUTE)
 
-    return DatePickerDialog(context, DatePickerDialog.OnDateSetListener { _, year, month, day ->
-        TimePickerDialog(context, TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+    return DatePickerDialog(context, { _, year, month, day ->
+        TimePickerDialog(context, { _, hour, minute ->
             val pickedDateTime = Calendar.getInstance()
             pickedDateTime.set(year, month, day, hour, minute)
             textView.text = context.getString(
@@ -192,9 +186,7 @@ fun getDatePickerDialog(context: Context, textView: TextView): DatePickerDialog 
 }
 
 fun dateFromString(stringDate: String): LocalDateTime {
-    var pattern = ""
-    pattern =
-        if (stringDate.indexOf(",") == 1) "d, MMMM yyyy, HH:mm" else "dd, MMMM yyyy, HH:mm"
+    val pattern: String = if (stringDate.indexOf(",") == 1) "d, MMMM yyyy, HH:mm" else "dd, MMMM yyyy, HH:mm"
     var dateTimeFormatter: DateTimeFormatter =
         DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(pattern)
             .toFormatter(Locale.CANADA)
@@ -221,57 +213,17 @@ fun hideSoftKeyboard(context: Context) {
 
 fun setupUI(fragment: NewReminderFragment, view: View, context: Context) {
 
-    // Set up touch listener for non-text box views to hide keyboard.
     if (view is MenuItem) {
-        view.setOnTouchListener(OnTouchListener { v, event ->
+        view.setOnTouchListener { v, _ ->
             hideSoftKeyboard(context)
             v.performClick()
             false
-        })
-    }
-    //If a layout container, iterate over children and seed recursion.
-    if (view is ViewGroup) {
-        for (i in 0 until (view as ViewGroup).childCount) {
-            val innerView: View = (view as ViewGroup).getChildAt(i)
-            println("ge")
-            setupUI(fragment, innerView, context)
         }
     }
-}
-
-fun ImageView.scaleDown() {
-    val scaleDownX: ObjectAnimator = ObjectAnimator.ofFloat(this, "scaleX", 0.7f)
-    val scaleDownY: ObjectAnimator = ObjectAnimator.ofFloat(this, "scaleY", 0.7f)
-    scaleDownX.duration = 1500
-    scaleDownY.duration = 1500
-
-    val moveUpY: ObjectAnimator = ObjectAnimator.ofFloat(this, "translationY", (-100).toFloat())
-    moveUpY.duration = 1500
-    val scaleDown = AnimatorSet()
-    val moveUp = AnimatorSet()
-    scaleDown.play(scaleDownX).with(scaleDownY)
-    moveUp.play(moveUpY)
-}
-
-fun setGlobalLayoutListener(
-    view: View,
-    isKeyBoardShown: Boolean,
-    keyboardInterface: KeyboardInterface
-) {
-    view.viewTreeObserver.addOnGlobalLayoutListener {
-        var r: Rect = Rect()
-        view.getWindowVisibleDisplayFrame(r)
-        var screenH = view.rootView.height
-        var keypadH = screenH - r.bottom
-
-        if (keypadH > screenH * 0.15) {
-            if (!isKeyBoardShown) {
-                keyboardInterface.onKeyboardVisibilityChanged(true)
-            }
-        } else {
-            if (isKeyBoardShown) {
-                keyboardInterface.onKeyboardVisibilityChanged(false)
-            }
+    if (view is ViewGroup) {
+        for (i in 0 until view.childCount) {
+            val innerView: View = view.getChildAt(i)
+            setupUI(fragment, innerView, context)
         }
     }
 }
@@ -289,7 +241,7 @@ fun pxToDp(px: Int): Int {
 }
 
 fun updatedPages(taskEntity: TaskEntity, pages: ArrayList<Page>): ArrayList<Page> {
-    var dayCountSet: MutableList<Long> = mutableListOf()
+    val dayCountSet: MutableList<Long> = mutableListOf()
     for (i in pages) {
             dayCountSet.add(i.taskList[0].taskDate.withHour(0).withMinute(0).withNano(0).toEpochSecond(
                 ZoneOffset.UTC))
@@ -317,6 +269,10 @@ fun getTime(localDate: LocalDateTime) : String {
     val pattern = if (localDate.dayOfMonth-10 < 0) "d, MMMM yyyy" else "dd, MMMM yyyy"
     return localDate.format(DateTimeFormatter.ofPattern(pattern))
 }
+
+// Commented part is for dynamically size-changing of "existing tasks"-sector
+
+/*
 fun View.setHeight(positionOffSet: Float, itemCount: Int) {
     val float = (dpToPx(65) + itemCount * dpToPx(60) * positionOffSet).toInt()
     if (float > this.layoutParams.height) {
@@ -345,7 +301,8 @@ fun View.setHeight(positionOffSet: Float, itemCount: Int, nextItemCount: Int) {
             this.layoutParams.height = pxToDp(height)
         }
     }
-}
+}*/
+
 fun getColorBySectorIcon(icon: Int) : Int {
     var color = R.color.mainColor
     when (icon) {

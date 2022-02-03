@@ -1,4 +1,4 @@
-package com.example.fffaaaa.activity
+package com.example.fffaaaa.fragments
 
 import android.app.Activity
 import android.content.Context
@@ -16,13 +16,15 @@ import com.example.fffaaaa.contract.FragmentInterface
 import com.example.fffaaaa.contract.KeyboardInterface
 import com.example.fffaaaa.contract.NavigationContract
 import com.example.fffaaaa.contract.ReminderContract
+import com.example.fffaaaa.custom.CategoryDialog
+import com.example.fffaaaa.observer.ScrollPositionObserver
 import com.example.fffaaaa.presenter.FragmentPresenter
 import com.example.fffaaaa.presenter.NavigationPresenter
 import com.example.fffaaaa.presenter.NewReminderPresenter
-import com.example.fffaaaa.room.SDao
-import com.example.fffaaaa.room.SectorEntity
-import com.example.fffaaaa.room.TDao
-import com.example.fffaaaa.room.TaskEntity
+import com.example.fffaaaa.room.daos.SDao
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.daos.TDao
+import com.example.fffaaaa.room.enitites.TaskEntity
 import kotlinx.android.synthetic.main.create_reminer_one.category_img
 import kotlinx.android.synthetic.main.create_reminer_one.category_tv
 import kotlinx.android.synthetic.main.create_reminer_one.date_tv
@@ -32,19 +34,20 @@ import kotlinx.android.synthetic.main.create_reminer_one.view.date_tv
 import kotlinx.android.synthetic.main.create_reminer_one.view.new_rem_toolbar
 import kotlinx.android.synthetic.main.create_reminer_two.*
 import kotlinx.android.synthetic.main.create_reminer_two.view.*
-import java.time.LocalDateTime
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Fragment(),
     ReminderContract.View,
     NavigationContract.View, KeyboardInterface {
-    private val SELECT_CATEGORY_CODE = 5
-    var newReminderPresenter: NewReminderPresenter? = null
+    private val selectCode = 5
+    private var newReminderPresenter: NewReminderPresenter? = null
+    @DelicateCoroutinesApi
     var fragmentPresenter: FragmentPresenter? = null
     private lateinit var vibrator: Vibrator
     private var hasFocus: Boolean = false
     private val vibrationEffect: VibrationEffect =
         VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE)
-    protected lateinit var navigationPresenter: FragmentInterface.Presenter
+    private lateinit var navigationPresenter: FragmentInterface.Presenter
     /* companion object {
          const val SECTORS = "sectors"
          lateinit var dao : SDao
@@ -56,10 +59,7 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
          }
      }*/
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
+    @DelicateCoroutinesApi
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,10 +70,10 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
 
         view.viewTreeObserver.addOnGlobalLayoutListener {
             view.viewTreeObserver.addOnGlobalLayoutListener {
-                var r = Rect()
+                val r = Rect()
                 view.getWindowVisibleDisplayFrame(r)
-                var screenH = view.rootView.height
-                var keypadH = screenH - r.bottom
+                val screenH = view.rootView.height
+                val keypadH = screenH - r.bottom
 
                 if (keypadH > screenH * 0.15) {
                     if (!hasFocus) {
@@ -102,21 +102,22 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         setupUI(this, view.new_rem_toolbar, context!!)
         setupUI(this, view.createRemButton, context!!)
         newReminderPresenter = NewReminderPresenter(this, sDao, tDao)
-        view.category_tv.setOnClickListener(View.OnClickListener {
+        view.category_tv.setOnClickListener {
             val categoryDialog = CategoryDialog()
-            categoryDialog.setTargetFragment(this, SELECT_CATEGORY_CODE)
+            categoryDialog.setTargetFragment(this, selectCode)
             fragmentManager?.let { it1 -> categoryDialog.show(it1, categoryDialog.javaClass.name) }
-        })
+        }
         view.date_tv.setOnClickListener {
             newReminderPresenter!!.onDateTextViewClicked(
                 context!!,
                 it as TextView
             )
         }
-        view.createRemButton.setOnClickListener(View.OnClickListener {
+        view.createRemButton.setOnClickListener {
             if (date_tv.text.equals(resources.getString(R.string.date_tv_text)) || view.task_et.length() == 0) {
                 if (view.task_et.length() == 0) view.task_et_title.invalidValue()
                 if (date_tv.text.equals(resources.getString(R.string.date_tv_text))) view.date_tv.invalidValue()
+                vibrator.vibrate(vibrationEffect)
             } else {
                 hideSoftKeyboard(context!!)
                 newReminderPresenter!!.onAddReminderButton(
@@ -130,7 +131,7 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
                 )
             }
 
-        })
+        }
         return view
     }
 
@@ -145,6 +146,7 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
     override fun updateCategory() {
     }
 
+    @DelicateCoroutinesApi
     override fun onSectorSaved(sector: SectorEntity, position: Int, taskEntity: TaskEntity) {
         Log.i("Function", "onSectorSaved")
         if (position < 0) {
@@ -153,10 +155,6 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
             fragmentPresenter?.changeSectorFromStartView(sector, position, taskEntity, true)
         }
         over()
-    }
-
-    override fun openSectorScreen(sectorId: Long) {
-        TODO("Not yet implemented")
     }
 
     override fun transit(up: Boolean) {
@@ -170,6 +168,7 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         }
     }
 
+    @DelicateCoroutinesApi
     override fun onNotificationCreating(taskEntity: TaskEntity, icon: Int) {
         fragmentPresenter?.onNotificationEventReceived(taskEntity, icon)
     }
@@ -179,11 +178,12 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         newReminderPresenter?.updateSectorsStringList(list)
     }
 
-    override fun attachNavigationPresenter(presenter: NavigationPresenter) {
+    override fun attachNavigationPresenter(navigation: NavigationPresenter) {
         Log.i("Function", "attachNavigationPresenter")
-        navigationPresenter = presenter;
+        navigationPresenter = navigation
     }
 
+    @DelicateCoroutinesApi
     override fun attachFragmentPresenter(fragmentPresenter: FragmentPresenter) {
         Log.i("Function", "attachFragmentPresenter")
         this.fragmentPresenter = fragmentPresenter
@@ -196,7 +196,7 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
             category_tv.text = data?.getStringExtra("title")
             act_tv.text = data?.getStringExtra("title")
             act_tv.setTextColor(context!!.getColor(data!!.getIntExtra("color", R.color.mainColor)))
-            data!!.getIntExtra("icon", R.drawable.file_def_dr).let {
+            data.getIntExtra("icon", R.drawable.file_def_dr).let {
                 category_img.setImageResource(it)
                 act_im.setImageResource(it)
                 category_img.tag = it
@@ -208,7 +208,7 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         Log.i("Function", "onHiddenChanged")
         val h = Handler()
         if (hidden) {
-            h.postDelayed(Runnable {
+            h.postDelayed( {
                 view?.task_et?.text?.clear()
                 context?.getColor(R.color.black)?.let {
                     view?.date_tv?.setTextColor(it)

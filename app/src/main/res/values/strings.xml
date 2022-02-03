@@ -6,8 +6,10 @@
     <string name="description">Course Description</string>
     <string name="date_tv_text">Select date</string>
     <string name="note_et_text">Add note</string>
+    <string name="sector_tasks">%d Tasks"</string>
     <string name="category_tv_text">Various</string>
     <string name="first_sector_info_title">Late</string>
+    <string name="new_task_fragment_tb_title">New Task</string>
     <string name="second_sector_info_title">Today</string>
     <string name="third_sector_info_title">Done</string>
     <string name="task_count_text">%1$d Tasks</string>
@@ -25,4 +27,6 @@
     <string name="second_menu_title">Default Sort</string>
     <string name="third_menu_title">Task Count Sort</string>
     <string name="first_infomenu_title">Delete</string>
+    <string name="empty_adapter_title">You\'r\e doing great!</string>
+    <string name="empty_adapter_desc">You don\'t\have any overdue goals!</string>
 </resources>

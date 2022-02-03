@@ -3,23 +3,22 @@ package com.example.fffaaaa.presenter
 import android.content.SharedPreferences
 import android.util.Log
 import android.view.MenuItem
-import androidx.annotation.Nullable
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.R
-import com.example.fffaaaa.Sectors
-import com.example.fffaaaa.activity.SectorInfoFragment
+import com.example.fffaaaa.enums.Sectors
+import com.example.fffaaaa.fragments.SectorInfoFragment
 import com.example.fffaaaa.adapter.SectorAdapter
 import com.example.fffaaaa.contract.*
-import com.example.fffaaaa.room.SDao
-import com.example.fffaaaa.room.SectorEntity
-import com.example.fffaaaa.room.TaskEntity
+import com.example.fffaaaa.room.daos.SDao
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.enitites.TaskEntity
 import kotlinx.android.synthetic.main.sector_info.*
-import java.time.LocalDateTime
+import kotlinx.coroutines.DelicateCoroutinesApi
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
 
+@DelicateCoroutinesApi
 class FragmentPresenter(
     private var startView: StartContract.View,
     private var remView: ReminderContract.View,
@@ -85,11 +84,12 @@ class FragmentPresenter(
         SectorEntity.update(dao, sectorEntity)
         sectorAdapter.sectorList[position] = sectorEntity
         startView.updateSectors(position, (sectorAdapter.sectorList.size - position))
+        startView.dismissNotification(taskEntity.id)
     }
 
     override fun toolbarModify(sharedPreferences: SharedPreferences, menuItem: MenuItem) {
         Log.i("FragmentPresenter", "toolbarModify")
-        var prefV = sharedPreferences.getString("sort", "")
+        val prefV = sharedPreferences.getString("sort", "")
         when (menuItem.itemId) {
             R.id.alph_sort -> {
                 if (prefV != "alphabet") {

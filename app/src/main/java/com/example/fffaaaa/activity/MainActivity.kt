@@ -1,9 +1,8 @@
 package com.example.fffaaaa.activity
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,36 +12,37 @@ import com.example.fffaaaa.contract.FragmentInterface
 import com.example.fffaaaa.contract.NavigationContract
 import com.example.fffaaaa.contract.SSI
 import com.example.fffaaaa.contract.StartContract
+import com.example.fffaaaa.fragments.NewReminderFragment
+import com.example.fffaaaa.fragments.SectorInfoFragment
+import com.example.fffaaaa.notifications.AlarmManagerBroadcastReceiver
 import com.example.fffaaaa.notifications.NotificationUtils
 import com.example.fffaaaa.presenter.*
 import com.example.fffaaaa.room.*
+import com.example.fffaaaa.room.daos.SDao
+import com.example.fffaaaa.room.daos.TDao
+import com.example.fffaaaa.room.enitites.SectorEntity
+import com.example.fffaaaa.room.enitites.TaskEntity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.create_reminer_two.*
 import kotlinx.android.synthetic.main.create_reminer_two.view.*
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import android.util.Log
-
-import com.example.fffaaaa.notifications.AlarmManagerBroadcastReceiver
-
-
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 
 class MainActivity : AppCompatActivity(),
     StartContract.View, FragmentInterface.View {
-    lateinit var sDao: SDao
-    lateinit var tDao: TDao
-    var sectorInfoPresenter: SectorInfoPresenter? = null
-    var fragmentPresenter: FragmentPresenter? = null
-    var navigationPresenter: NavigationPresenter? = null
+    private lateinit var sDao: SDao
+    private lateinit var tDao: TDao
+    private var sectorInfoPresenter: SectorInfoPresenter? = null
+    private var fragmentPresenter: FragmentPresenter? = null
+    private var navigationPresenter: NavigationPresenter? = null
     private lateinit var newReminderFragment: NewReminderFragment
     private lateinit var pref: SharedPreferences
     private lateinit var sectorInfoFragment: SectorInfoFragment
-    private lateinit var sortStyle: Comparator<SectorEntity>
+    @DelicateCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        tb.setOnMenuItemClickListener { it ->
+        tb.setOnMenuItemClickListener {
             fragmentPresenter?.toolbarModify(pref, it)
             return@setOnMenuItemClickListener true
         }
@@ -57,17 +57,16 @@ class MainActivity : AppCompatActivity(),
         update(newReminderFragment, sectorInfoFragment)
         sectorRview.layoutManager = GridLayoutManager(this, 2)
         addButton.attachToRecyclerView(sectorRview)
-        addButton.setOnClickListener(View.OnClickListener {
+        addButton.setOnClickListener {
             navigationPresenter!!.showFragment(
                 newReminderFragment
             )
-        })
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 
+    @DelicateCoroutinesApi
+    @SuppressLint("NotifyDataSetChanged")
     override fun onSectorsLoaded(
         sectors: ArrayList<SectorEntity>,
         fragmentPresenter: FragmentPresenter
@@ -97,20 +96,24 @@ class MainActivity : AppCompatActivity(),
         NotificationUtils().setNotification(taskEntity, icon, this)
     }
 
-    override fun update(newRemFragment: Fragment, secInfoFragment: Fragment) {
-        if (newRemFragment is NavigationContract.View) {
-            navigationPresenter?.let { newRemFragment.attachNavigationPresenter(it) }
-            fragmentPresenter?.let { newRemFragment.attachFragmentPresenter(it) }
-            supportFragmentManager.beginTransaction().replace(com.example.fffaaaa.R.id.new_rem_fragment, newRemFragment)
-                .hide(newRemFragment).commit()
+    override fun dismissNotification(id: Long) {
+        NotificationUtils().dismissNotification(id, this)
+    }
+
+    override fun update(firstFragment: Fragment, secondFragment: Fragment) {
+        if (firstFragment is NavigationContract.View) {
+            navigationPresenter?.let { firstFragment.attachNavigationPresenter(it) }
+            fragmentPresenter?.let { firstFragment.attachFragmentPresenter(it) }
+            supportFragmentManager.beginTransaction().replace(R.id.new_rem_fragment, firstFragment)
+                .hide(firstFragment).commit()
         }
-        if (secInfoFragment is SSI.View && secInfoFragment is NavigationContract.View) {
-            navigationPresenter?.let { secInfoFragment.attachNavigationPresenter(it) }
-            sectorInfoPresenter?.let { secInfoFragment.attachSectorInfoPresenter(it) }
-            fragmentPresenter?.let { secInfoFragment.attachFragmentPresenter(it) }
+        if (secondFragment is SSI.View && secondFragment is NavigationContract.View) {
+            navigationPresenter?.let { secondFragment.attachNavigationPresenter(it) }
+            sectorInfoPresenter?.let { secondFragment.attachSectorInfoPresenter(it) }
+            fragmentPresenter?.let { secondFragment.attachFragmentPresenter(it) }
             supportFragmentManager.beginTransaction()
-                .replace(com.example.fffaaaa.R.id.sector_info_fragment, secInfoFragment)
-                .hide(secInfoFragment).commit()
+                .replace(R.id.sector_info_fragment, secondFragment)
+                .hide(secondFragment).commit()
         }
     }
 
