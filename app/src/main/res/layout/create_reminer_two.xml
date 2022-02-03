@@ -108,7 +108,8 @@
                         android:layout_marginStart="10dp"
                         android:background="@color/white"
                         android:ems="10"
-                        android:maxLength="15"
+                        android:hint="@string/new_task_et_title_text"
+                        android:maxLength="23"
                         android:fontFamily="@font/ops_bold"
                         android:inputType="textPersonName"
                         android:textSize="24sp"
@@ -176,7 +177,7 @@
                             android:background="#00FFFFFF"
                             android:maxLength="25"
                             android:fontFamily="@font/ops_reg"
-                            android:text="@string/note_et_text"
+                            android:hint="@string/note_et_text"
                             android:textSize="16sp" />
                     </TableRow>
 

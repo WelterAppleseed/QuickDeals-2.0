@@ -11,6 +11,7 @@ import com.example.fffaaaa.R
 import com.example.fffaaaa.custom.TaskItem
 import com.example.fffaaaa.room.enitites.TaskEntity
 import kotlinx.android.synthetic.main.task_item_layout.view.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 class TasksAdapter(
     private var taskList: ArrayList<TaskEntity>,
@@ -26,6 +27,7 @@ class TasksAdapter(
         return TaskRecyclerViewHolder(v)
     }
 
+    @DelicateCoroutinesApi
     override fun onBindViewHolder(
         holder: TaskRecyclerViewHolder, position: Int
     ) {

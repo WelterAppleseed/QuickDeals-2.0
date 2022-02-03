@@ -18,5 +18,7 @@ interface StartContract {
         fun updateNotifications(taskEntity: TaskEntity, icon: Int)
 
         fun dismissNotification(id: Long)
+
+        fun showAddButton()
     }
 }

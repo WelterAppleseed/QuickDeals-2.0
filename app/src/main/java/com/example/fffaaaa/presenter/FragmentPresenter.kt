@@ -59,6 +59,7 @@ class FragmentPresenter(
 
     override fun onSectorClicked(sector: SectorEntity) {
         Log.i("FragmentPresenter", "onSectorClicked")
+        startView.showAddButton()
         secView.update(sector, this, sectors.indexOf(sector))
     }
 

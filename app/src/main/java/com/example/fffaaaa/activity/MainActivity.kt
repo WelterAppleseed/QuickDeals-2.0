@@ -100,6 +100,10 @@ class MainActivity : AppCompatActivity(),
         NotificationUtils().dismissNotification(id, this)
     }
 
+    override fun showAddButton() {
+        addButton.show()
+    }
+
     override fun update(firstFragment: Fragment, secondFragment: Fragment) {
         if (firstFragment is NavigationContract.View) {
             navigationPresenter?.let { firstFragment.attachNavigationPresenter(it) }

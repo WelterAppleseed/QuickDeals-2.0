@@ -93,6 +93,13 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
                 resources.getDimensionPixelSize(R.dimen.act_im_size)
             )
         )
+        view.note_tv.setOnTouchListener { v, _ ->
+                val handler = Handler()
+                handler.postDelayed({
+                    view.note_tv.requestFocus()
+                }, 200)
+            v.performClick()
+        }
         vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         view.new_rem_toolbar.menu.findItem(R.id.close_it).setOnMenuItemClickListener {
             over()
@@ -209,12 +216,6 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         val h = Handler()
         if (hidden) {
             h.postDelayed( {
-                view?.task_et?.text?.clear()
-                context?.getColor(R.color.black)?.let {
-                    view?.date_tv?.setTextColor(it)
-                    view?.task_et_title?.setTextColor(it)
-                }
-                view?.date_tv?.text = context?.getString(R.string.date_tv_text)
                 clearSectorIdentifiers()
             }, 500)
         }
@@ -229,6 +230,12 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
     }
 
     private fun clearSectorIdentifiers() {
+        view?.task_et?.text?.clear()
+        context?.getColor(R.color.black)?.let {
+            view?.date_tv?.setTextColor(it)
+            view?.task_et_title?.setTextColor(it)
+        }
+        view?.date_tv?.text = context?.getString(R.string.date_tv_text)
         view?.category_img?.setImageResource(R.drawable.file_def_dr)
         view?.category_img?.tag = null
         view?.category_tv?.text = resources.getString(R.string.category_tv_text)
@@ -236,5 +243,6 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
         view?.act_tv?.text = resources.getString(R.string.category_tv_text)
         view?.act_tv?.setTextColor(context!!.getColor(R.color.mainColor))
         view?.category_tv?.text = resources.getString(R.string.category_tv_text)
+        view?.note_tv?.text = null
     }
 }
