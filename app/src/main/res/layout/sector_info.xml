@@ -75,19 +75,18 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/parent_rec_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1.1"
-            android:background="@drawable/rounded_large_item_background">
+            android:background="@drawable/rounded_large_item_background"
+            android:foreground="@drawable/various_fore">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/parent_rec"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:nestedScrollingEnabled="true"
-                android:paddingStart="40dp"
-                android:paddingTop="25dp"
-                android:paddingEnd="40dp" />
+                android:nestedScrollingEnabled="true" />
         </FrameLayout>
     </LinearLayout>
 

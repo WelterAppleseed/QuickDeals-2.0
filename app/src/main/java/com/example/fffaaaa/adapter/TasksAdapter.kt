@@ -36,8 +36,8 @@ class TasksAdapter(
         (holder.itemView as TaskItem).setDate(taskEntity.taskDate, state)
         holder.itemView.setTitle(taskEntity.taskTitle)
         holder.itemView.setTaskItemClickListener(View.OnClickListener {
-            taskList.removeAt(position)
             parentAdapter.doneTask(state, taskEntity)
+            taskList.removeAt(position)
             parentAdapter.replaceContainerBack(
                 if (holder.itemView.parent is RecyclerView) (holder.itemView.parent as RecyclerView) else (holder.itemView.parent.parent as RecyclerView), taskList.size)
         })
@@ -54,6 +54,5 @@ class TasksAdapter(
 
     fun insertToList(taskEntity: TaskEntity) {
         taskList.add(taskEntity)
-        notifyItemInserted(taskList.size-1)
     }
 }

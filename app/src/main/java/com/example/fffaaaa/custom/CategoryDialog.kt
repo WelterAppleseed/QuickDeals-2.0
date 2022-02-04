@@ -59,7 +59,6 @@ class CategoryDialog : DialogFragment(), View.OnClickListener{
                 color = R.color.studyColor
             }
         }
-        println("$title and $icon")
         val intent = Intent()
         intent.putExtra("title", title)
         intent.putExtra("icon", icon)

@@ -116,7 +116,6 @@ class SectorInfoFragment(private var dao: TDao) : Fragment(), NavigationContract
 
     override fun requestSectorDeleting(sector: SectorEntity) {
         Log.i("SectorInfoFragment", "requestSectorDeleting")
-        println(fragmentPresenter)
         fragmentPresenter?.delete(sector)
     }
 }

@@ -29,7 +29,6 @@ class DemoInfiniteAdapter(
     private var itemCount: MutableSet<Int> = mutableSetOf()
 
     fun getItemHeight(position: Int) : Int {
-        println("${itemCount.size} and ${itemCount.elementAt(position)}")
         return dpToPx(55) + dpToPx(65) * itemCount.elementAt(position)
     }*/
 

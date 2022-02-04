@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -60,10 +61,11 @@ fun updateSectorInfo(
     val sectorInfoTitleTV = layout.findViewById<TextView>(R.id.sector_info_title_tv)
     val sectorInfoTaskCountTV = layout.findViewById<TextView>(R.id.sector_info_task_count_tv)
     val sectorToolbar = layout.findViewById<Toolbar>(R.id.sector_toolbar)
+    val frame = layout.findViewById<FrameLayout>(R.id.parent_rec_frame)
 
-    val color = getColorBySectorIcon(sectorEntity.icon)
-    layout.backgroundTintList =  ContextCompat.getColorStateList(context, color)
-    sectorToolbar.backgroundTintList =  ContextCompat.getColorStateList(context, color)
+    val color = getColorAndUpdateFrameForegroundBySectorIcon(frame, context, sectorEntity.icon)
+    layout.backgroundTintList = ContextCompat.getColorStateList(context, color)
+    sectorToolbar.backgroundTintList = ContextCompat.getColorStateList(context, color)
 
     sectorInfoIconImg.setImageResource(sectorEntity.icon)
     sectorInfoTitleTV.text = sectorEntity.title
@@ -121,7 +123,7 @@ fun updateSectorInfo(
         pagesSize.add(getHeight(it.taskList.size))
     }*/
 
-    val parentAdapter =  ParentAdapter(
+    val parentAdapter = ParentAdapter(
         arrayListOf(lateArrayList, existArrayList, doneArrayList),
         tDao,
         fragmentPresenter,
@@ -135,7 +137,7 @@ fun updateSectorInfo(
     val br: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (sectorEntity.id == intent.getLongExtra("sector_id", 0)) {
-                Log.i("AAAAAAAAAA", "AAAAAAAAAAAAA $intent")
+                Log.i("AdapterBroadcastReciever", "Handle Intent")
                 val pageList = parentAdapter.getPages()
                 val task = TaskEntity.getTaskById(tDao, intent.getLongExtra("id", 0))!!
                 for (i in 0 until pages.size) {
@@ -146,7 +148,9 @@ fun updateSectorInfo(
                         }
                     }
                 }
-                parentAdapter.addToLateTaskList(task)
+                if (!parentAdapter.getLateTaskList().contains(task)) {
+                    parentAdapter.addToLateTaskList(task)
+                }
                 parentAdapter.setPages(parentAdapter.getPages())
                 parentAdapter.notifyItemRangeChanged(0, 2)
             }
@@ -181,12 +185,13 @@ fun getDatePickerDialog(context: Context, textView: TextView): DatePickerDialog 
                 minute,
             )
             textView.setTextColor(context.getColor(R.color.black))
-        }, startHour, startMinute, false).show()
+        }, startHour, startMinute, true).show()
     }, startYear, startMonth, startDay)
 }
 
 fun dateFromString(stringDate: String): LocalDateTime {
-    val pattern: String = if (stringDate.indexOf(",") == 1) "d, MMMM yyyy, HH:mm" else "dd, MMMM yyyy, HH:mm"
+    val pattern: String =
+        if (stringDate.indexOf(",") == 1) "d, MMMM yyyy, HH:mm" else "dd, MMMM yyyy, HH:mm"
     var dateTimeFormatter: DateTimeFormatter =
         DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern(pattern)
             .toFormatter(Locale.CANADA)
@@ -243,13 +248,18 @@ fun pxToDp(px: Int): Int {
 fun updatedPages(taskEntity: TaskEntity, pages: ArrayList<Page>): ArrayList<Page> {
     val dayCountSet: MutableList<Long> = mutableListOf()
     for (i in pages) {
-            dayCountSet.add(i.taskList[0].taskDate.withHour(0).withMinute(0).withNano(0).toEpochSecond(
-                ZoneOffset.UTC))
+        dayCountSet.add(
+            i.taskList[0].taskDate.withHour(0).withMinute(0).withNano(0).toEpochSecond(
+                ZoneOffset.UTC
+            )
+        )
     }
     var isFound = false
     for (c in 0 until pages.size) {
-        if (dayCountSet[c] == taskEntity.taskDate.withHour(0).withMinute(0).withNano(0).toEpochSecond(
-                ZoneOffset.UTC)
+        if (dayCountSet[c] == taskEntity.taskDate.withHour(0).withMinute(0).withNano(0)
+                .toEpochSecond(
+                    ZoneOffset.UTC
+                )
         ) {
             pages[c].taskList.add(taskEntity)
             isFound = true
@@ -262,11 +272,13 @@ fun updatedPages(taskEntity: TaskEntity, pages: ArrayList<Page>): ArrayList<Page
     }
     return pages
 }
+
 fun MutableList<Page>.sortPages() {
     this.sortBy { it.taskList[0].taskDate }
 }
-fun getTime(localDate: LocalDateTime) : String {
-    val pattern = if (localDate.dayOfMonth-10 < 0) "d, MMMM yyyy" else "dd, MMMM yyyy"
+
+fun getTime(localDate: LocalDateTime): String {
+    val pattern = if (localDate.dayOfMonth - 10 < 0) "d, MMMM yyyy" else "dd, MMMM yyyy"
     return localDate.format(DateTimeFormatter.ofPattern(pattern))
 }
 
@@ -288,7 +300,6 @@ fun getHeight(itemCount: Int) : Int {
     }
 }
 fun View.setHeight(positionOffSet: Float, itemCount: Int, nextItemCount: Int) {
-    println(positionOffSet)
     val height = 2 * (dpToPx(65) + (nextItemCount * dpToPx(60)) * positionOffSet).toInt()
     if (nextItemCount > itemCount) {
         if (height >= this.layoutParams.height) {
@@ -303,16 +314,35 @@ fun View.setHeight(positionOffSet: Float, itemCount: Int, nextItemCount: Int) {
     }
 }*/
 
-fun getColorBySectorIcon(icon: Int) : Int {
+fun getColorAndUpdateFrameForegroundBySectorIcon(frameLayout: FrameLayout, context: Context, icon: Int): Int {
     var color = R.color.mainColor
+    var foreground = ContextCompat.getDrawable(context, R.drawable.various_fore)
     when (icon) {
-        R.drawable.home_def_dr -> color = R.color.homeColor
-        R.drawable.work_def_dr -> color = R.color.workColor
-        R.drawable.travel_def_dr -> color = R.color.travelColor
-        R.drawable.hobby_def_dr -> color = R.color.hobbyColor
-        R.drawable.market_def_dr -> color = R.color.marketColor
-        R.drawable.study_def_dr -> color = R.color.studyColor
+        R.drawable.home_def_dr -> {
+            color = R.color.homeColor
+            foreground = ContextCompat.getDrawable(context, R.drawable.home_fore)
+        }
+        R.drawable.work_def_dr -> {
+            color = R.color.workColor
+            foreground = ContextCompat.getDrawable(context, R.drawable.work_fore)
+        }
+        R.drawable.travel_def_dr -> {
+            color = R.color.travelColor
+            foreground = ContextCompat.getDrawable(context, R.drawable.travel_fore)
+        }
+        R.drawable.hobby_def_dr -> {
+            color = R.color.hobbyColor
+            foreground = ContextCompat.getDrawable(context, R.drawable.hobby_fore)
+        }
+        R.drawable.market_def_dr -> {
+            color = R.color.marketColor
+            foreground = ContextCompat.getDrawable(context, R.drawable.market_fore)
+        }
+        R.drawable.study_def_dr -> {
+            color = R.color.studyColor
+            foreground = ContextCompat.getDrawable(context, R.drawable.study_fore)
+        }
     }
-    println(color)
+    frameLayout.foreground = foreground
     return color
 }

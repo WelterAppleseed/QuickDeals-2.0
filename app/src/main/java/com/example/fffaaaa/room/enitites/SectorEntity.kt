@@ -59,7 +59,6 @@ data class SectorEntity(
             runBlocking {
                 val job = GlobalScope.launch(Dispatchers.IO) {
                     sectorEntity = dao.findSectorById(id)
-                    println(dao.findSectorById(id))
                 }
                 job.join()
             }

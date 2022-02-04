@@ -3,7 +3,9 @@ package com.example.fffaaaa.activity
 import android.annotation.SuppressLint
 import android.content.*
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.fffaaaa.R
@@ -143,9 +145,14 @@ class MainActivity : AppCompatActivity(),
         super.onWindowFocusChanged(hasFocus)
     }
     override fun onBackPressed() {
-        val homeIntent = Intent(Intent.ACTION_MAIN)
-        homeIntent.addCategory(Intent.CATEGORY_HOME)
-        homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(homeIntent)
+        if (!newReminderFragment.isVisible && !sectorInfoFragment.isVisible) {
+            val homeIntent = Intent(Intent.ACTION_MAIN)
+            homeIntent.addCategory(Intent.CATEGORY_HOME)
+            homeIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(homeIntent)
+            super.onBackPressed()
+        } else {
+            supportFragmentManager.popBackStack()
+        }
     }
 }

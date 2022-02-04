@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="category_tv_tag">2131165353</integer>
     <dimen name="act_im_size">150dp</dimen>
 </resources>

@@ -1,5 +1,7 @@
 package com.example.fffaaaa.adapter
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
@@ -8,19 +10,22 @@ import android.widget.TextView
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fffaaaa.R
 import com.example.fffaaaa.presenter.FragmentPresenter
 import com.example.fffaaaa.room.enitites.SectorEntity
 import com.example.fffaaaa.room.daos.TDao
 import com.example.fffaaaa.room.enitites.TaskEntity
 import android.widget.RelativeLayout
 import androidx.viewpager.widget.ViewPager
-import com.example.fffaaaa.dpToPx
-import com.example.fffaaaa.getTime
 import java.time.LocalDateTime
 import android.view.ViewGroup
+import com.example.fffaaaa.custom.PagerContainer
 import com.example.fffaaaa.model.Page
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlin.properties.Delegates
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.view.animation.Transformation
+import com.example.fffaaaa.*
 
 
 open class ParentAdapter @DelicateCoroutinesApi constructor(
@@ -35,7 +40,6 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
     private var context: Context
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     companion object {
         internal const val VIEW_TYPE_RECYCLER = 0
         internal const val VIEW_TYPE_PAGES = 1
@@ -53,6 +57,10 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
 
     fun getFullTaskList(): List<ArrayList<TaskEntity>> {
         return fullTasksList
+    }
+
+    fun getLateTaskList(): ArrayList<TaskEntity> {
+        return fullTasksList[VIEW_TYPE_RECYCLER]
     }
 
     fun getSectorCount(): Int {
@@ -148,7 +156,8 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
     @DelicateCoroutinesApi
     fun doneTask(state: Int, taskEntity: TaskEntity) {
         Log.i("ParentAdapter", "Done task.")
-        fullTasksList[state].remove(taskEntity)
+        //val isInPage = fullTasksList[VIEW_TYPE_PAGES].indexOf(taskEntity) != -1
+        //fullTasksList[state].remove(taskEntity)
         if (state == VIEW_TYPE_PAGES) {
             for (i in 0 until pages.size) {
                 if (pages[i].taskList.isEmpty()) {
@@ -157,15 +166,15 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
                 }
             }
         }
+        fullTasksList[state].remove(taskEntity)
         taskEntity.isOver = true
         TaskEntity.update(tDao, taskEntity)
         if (fullTasksList[VIEW_TYPE_RECYCLER2].size < 3) {
-            fullTasksList[VIEW_TYPE_RECYCLER2].add(taskEntity)
+            fullTasksList[VIEW_TYPE_RECYCLER2].add(0, taskEntity)
         } else {
             fullTasksList[VIEW_TYPE_RECYCLER2][0] = taskEntity
         }
         updateSectorCount(false)
-        notifyItemChanged(state)
         notifyItemChanged(VIEW_TYPE_RECYCLER2)
         fragmentPresenter.changeSectorFromStartView(sectorEntity, sectorPosition, taskEntity, false)
     }
@@ -173,7 +182,6 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
     fun replaceContainer(recyclerView: RecyclerView, count: Int) {
         val container =
             if (recyclerView.parent is NestedScrollView) recyclerView.parent.parent as RelativeLayout else recyclerView.parent as RelativeLayout
-        println(container.layoutParams.height)
         if (count > 2 && container.layoutParams.height != dpToPx(210)) {
             Log.i("ParentAdapter", "replaceContainer")
 
@@ -208,7 +216,6 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
     fun replaceContainerBack(recyclerView: RecyclerView, count: Int) {
         val container =
             if (recyclerView.parent is NestedScrollView) recyclerView.parent.parent as RelativeLayout else recyclerView.parent as RelativeLayout
-        println(container.layoutParams.height)
         if (count < 3 && container.layoutParams.height != ViewGroup.LayoutParams.WRAP_CONTENT) {
             Log.i("ParentAdapter", "replaceContainerBack")
             val rootParams = container.layoutParams
@@ -228,7 +235,7 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
 
     inner class RecyclerItemHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var contentTitle: TextView = view.findViewById<View>(R.id.content_title) as TextView
-        var childRecyclerView: RecyclerView = view.findViewById(R.id.child_recycler_view)
+        private var childRecyclerView: RecyclerView = view.findViewById(R.id.child_recycler_view)
 
 
         @DelicateCoroutinesApi
@@ -254,16 +261,6 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
                         }
                         return@OnTouchListener true
                     })
-                    val observer = object : RecyclerView.AdapterDataObserver() {
-                        override fun onChanged() {
-                            replaceContainer(
-                                childRecyclerView,
-                                (childRecyclerView.adapter as TasksAdapter).itemCount
-                            )
-                            notifyItemInserted((childRecyclerView.adapter as TasksAdapter).itemCount-1)
-                        }
-                    }
-                    (childRecyclerView.adapter as TasksAdapter).registerAdapterDataObserver(observer)
                 }
             } else {
                 if (style != VIEW_TYPE_RECYCLER2) {
@@ -293,7 +290,6 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
                 fragmentPresenter.onExistingTasksCreating()
             )*/
             // viewPager.setPageTransformer(true, CustomPageTransformer())
-            println("${viewPager.layoutParams.height} and ${dpToPx(120)}")
             val adapter = DemoInfiniteAdapter(
                 ArrayList(pages),
                 true,
@@ -303,6 +299,38 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
             )
             viewPager.layoutParams.height = dpToPx(220)
             viewPager.adapter = adapter
+            viewPager.offscreenPageLimit = pages.size
+            viewPager.setPadding(dpToPx(40), 0, dpToPx(40), 0)
+            viewPager.clipToPadding = false
+            viewPager.pageMargin = dpToPx(10)
+
+            viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {
+
+                }
+
+                override fun onPageSelected(position: Int) {
+                }
+
+                override fun onPageScrollStateChanged(state: Int) {
+                    if (state == 0) {
+                        val animator: ObjectAnimator =
+                            ObjectAnimator.ofInt(itemView.foreground, "alpha", 255, 0)
+                        animator.duration = 100
+                        animator.start()
+                    }
+                    if (state == 1) {
+                        val animator: ObjectAnimator =
+                            ObjectAnimator.ofInt(itemView.foreground, "alpha", 0, 255)
+                        animator.duration = 100
+                        animator.start()
+                    }
+                }
+            })
             /* viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {
                     if (state == 0) {
@@ -329,7 +357,6 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
                     positionOffsetPixels: Int
                 ) {
                     thread {
-                        println("$position and $lastPosition")
                         if (position != lastPosition && position - 1 <= pages.size) {
                             Log.i(
                                 "ParentAdapter",

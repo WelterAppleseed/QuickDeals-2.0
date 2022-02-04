@@ -167,10 +167,8 @@ class NewReminderFragment(private var sDao: SDao, private var tDao: TDao) : Frag
     override fun transit(up: Boolean) {
         Log.i("Function", "transit")
         if (!up) {
-            println(up)
             view?.scroll_v?.scrollTo(0, 100)
         } else {
-            println(up)
             view?.scroll_v?.fullScroll(FOCUS_DOWN)
         }
     }

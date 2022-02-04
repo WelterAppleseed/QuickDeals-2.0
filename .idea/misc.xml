@@ -12,9 +12,13 @@
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/default_sort_dr.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/delete_dr.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/file_def_dr.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/hiding_dr.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/hobby_def_der.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/hobby_fore.xml" value="0.23072916666666668" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/home_def_dr.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/home_fore.xml" value="0.23072916666666668" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/market_def_dr.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/market_fore.xml" value="0.23072916666666668" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/menu_dr.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/menu_dr_bl.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/menu_dr_black.xml" value="0.3828125" />
@@ -23,10 +27,15 @@
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/rec_foreground.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/rounded_image_background.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/rounded_large_item_background.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/rounded_large_item_foreground.xml" value="0.23072916666666668" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/rr.xml" value="0.3828125" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/study_def_dr.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/study_fore.xml" value="0.23072916666666668" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/travel_def_dr.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/travel_fore.xml" value="0.23072916666666668" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/various_fore.xml" value="0.23072916666666668" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/work_def_dr.xml" value="0.3828125" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/drawable/work_fore.xml" value="0.23072916666666668" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/card_layout.xml" value="0.3572815533980582" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/category_picker_dialog.xml" value="0.22" />
@@ -37,9 +46,9 @@
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/infinite_page_layout.xml" value="0.33" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/nested_into_viewpager_recycler.xml" value="0.22" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/nested_recycler_view.xml" value="0.36666666666666664" />
-        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/nested_recyclers_layout.xml" value="0.3112033195020747" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/nested_recyclers_layout.xml" value="0.22" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/nested_viewpager_layout.xml" value="0.22" />
-        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/sector_info.xml" value="0.16" />
+        <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/sector_info.xml" value="0.25" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/sector_infoo.xml" value="0.33" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/start_fragment.xml" value="0.190625" />
         <entry key="..\:/PROJECTS/fffaaaa/app/src/main/res/layout/task_item_layout.xml" value="0.29171817058096416" />
