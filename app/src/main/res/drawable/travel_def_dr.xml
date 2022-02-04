@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">>
+    <item
+        android:height="20dp"
+        android:width="20dp">
+        <bitmap android:src="@drawable/plane_def"
+            android:tint="@color/travelColor"/>
+    </item>
+</layer-list>
