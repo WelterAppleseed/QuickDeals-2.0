@@ -18,16 +18,18 @@ import com.example.fffaaaa.presenter.SectorInfoPresenter
 import com.example.fffaaaa.room.enitites.SectorEntity
 import com.example.fffaaaa.room.daos.TDao
 import com.example.fffaaaa.room.enitites.TaskEntity
-import kotlinx.android.synthetic.main.create_reminer_one.view.*
 import kotlinx.android.synthetic.main.sector_info.*
 import kotlinx.android.synthetic.main.sector_info.view.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 class SectorInfoFragment(private var dao: TDao) : Fragment(), NavigationContract.View, SSI.View,
     SectorPrivateInterface {
     private lateinit var navigationPresenter: FragmentInterface.Presenter
     private lateinit var sectorInfoPresenter: SectorInfoPresenter
+    @DelicateCoroutinesApi
     var fragmentPresenter: FragmentPresenter? = null
 
+    @DelicateCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,12 +59,14 @@ class SectorInfoFragment(private var dao: TDao) : Fragment(), NavigationContract
         navigationPresenter = navigation
     }
 
+    @DelicateCoroutinesApi
     override fun attachFragmentPresenter(fragmentPresenter: FragmentPresenter) {
         Log.i("SectorInfoFragment", "attachFragmentPresenter")
         this.fragmentPresenter = fragmentPresenter
         Log.i("SectorInfoFragment", this.fragmentPresenter.toString())
     }
 
+    @DelicateCoroutinesApi
     override fun update(
         sectorEntity: SectorEntity,
         fragmentPresenter: FragmentPresenter,
@@ -84,6 +88,7 @@ class SectorInfoFragment(private var dao: TDao) : Fragment(), NavigationContract
         view?.sector_info_task_count_tv?.text = context?.getString(R.string.task_count_text, count)
     }
 
+    @DelicateCoroutinesApi
     override fun taskListDynamicallyUpdate(taskEntity: TaskEntity) {
         Log.i("SectorInfoFragment", "taskListDynamicallyUpdate")
         view?.let { sectorInfoPresenter.updateRecyclers(taskEntity, it.parent_rec) }
@@ -94,6 +99,7 @@ class SectorInfoFragment(private var dao: TDao) : Fragment(), NavigationContract
         this.sectorInfoPresenter = sectorInfoPresenter
     }
 
+    @DelicateCoroutinesApi
     override fun changeSectorFromStartView(
         sectorEntity: SectorEntity,
         position: Int,
@@ -114,6 +120,7 @@ class SectorInfoFragment(private var dao: TDao) : Fragment(), NavigationContract
         return this.parent_rec
     }
 
+    @DelicateCoroutinesApi
     override fun requestSectorDeleting(sector: SectorEntity) {
         Log.i("SectorInfoFragment", "requestSectorDeleting")
         fragmentPresenter?.delete(sector)

@@ -7,7 +7,7 @@
             android:id="@+id/looping_view_pager"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:isInfinite="true"
+            app:isInfinite="false"
             app:layout_constraintDimensionRatio="1.78"
             app:scrollInterval="5000" />
 </RelativeLayout>

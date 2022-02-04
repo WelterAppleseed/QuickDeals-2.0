@@ -25,13 +25,6 @@ import com.example.fffaaaa.room.daos.SDao
 import com.example.fffaaaa.room.enitites.SectorEntity
 import com.example.fffaaaa.room.daos.TDao
 import com.example.fffaaaa.room.enitites.TaskEntity
-import kotlinx.android.synthetic.main.create_reminer_one.category_img
-import kotlinx.android.synthetic.main.create_reminer_one.category_tv
-import kotlinx.android.synthetic.main.create_reminer_one.date_tv
-import kotlinx.android.synthetic.main.create_reminer_one.view.category_tv
-import kotlinx.android.synthetic.main.create_reminer_one.view.createRemButton
-import kotlinx.android.synthetic.main.create_reminer_one.view.date_tv
-import kotlinx.android.synthetic.main.create_reminer_one.view.new_rem_toolbar
 import kotlinx.android.synthetic.main.create_reminer_two.*
 import kotlinx.android.synthetic.main.create_reminer_two.view.*
 import kotlinx.coroutines.DelicateCoroutinesApi

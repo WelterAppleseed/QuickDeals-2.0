@@ -1,7 +1,5 @@
 package com.example.fffaaaa.adapter
 
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
@@ -18,13 +16,8 @@ import android.widget.RelativeLayout
 import androidx.viewpager.widget.ViewPager
 import java.time.LocalDateTime
 import android.view.ViewGroup
-import com.example.fffaaaa.custom.PagerContainer
 import com.example.fffaaaa.model.Page
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlin.properties.Delegates
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.view.animation.Transformation
 import com.example.fffaaaa.*
 
 
@@ -175,6 +168,7 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
             fullTasksList[VIEW_TYPE_RECYCLER2][0] = taskEntity
         }
         updateSectorCount(false)
+        notifyItemChanged(state)
         notifyItemChanged(VIEW_TYPE_RECYCLER2)
         fragmentPresenter.changeSectorFromStartView(sectorEntity, sectorPosition, taskEntity, false)
     }
@@ -292,7 +286,7 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
             // viewPager.setPageTransformer(true, CustomPageTransformer())
             val adapter = DemoInfiniteAdapter(
                 ArrayList(pages),
-                true,
+                false,
                 tDao,
                 this@ParentAdapter,
                 fragmentPresenter.onExistingTasksCreating()
@@ -303,34 +297,6 @@ open class ParentAdapter @DelicateCoroutinesApi constructor(
             viewPager.setPadding(dpToPx(40), 0, dpToPx(40), 0)
             viewPager.clipToPadding = false
             viewPager.pageMargin = dpToPx(10)
-
-            viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                override fun onPageScrolled(
-                    position: Int,
-                    positionOffset: Float,
-                    positionOffsetPixels: Int
-                ) {
-
-                }
-
-                override fun onPageSelected(position: Int) {
-                }
-
-                override fun onPageScrollStateChanged(state: Int) {
-                    if (state == 0) {
-                        val animator: ObjectAnimator =
-                            ObjectAnimator.ofInt(itemView.foreground, "alpha", 255, 0)
-                        animator.duration = 100
-                        animator.start()
-                    }
-                    if (state == 1) {
-                        val animator: ObjectAnimator =
-                            ObjectAnimator.ofInt(itemView.foreground, "alpha", 0, 255)
-                        animator.duration = 100
-                        animator.start()
-                    }
-                }
-            })
             /* viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
                 override fun onPageScrollStateChanged(state: Int) {
                     if (state == 0) {

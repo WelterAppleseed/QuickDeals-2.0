@@ -3,9 +3,7 @@ package com.example.fffaaaa.activity
 import android.annotation.SuppressLint
 import android.content.*
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.fffaaaa.R
@@ -35,6 +33,7 @@ class MainActivity : AppCompatActivity(),
     private lateinit var sDao: SDao
     private lateinit var tDao: TDao
     private var sectorInfoPresenter: SectorInfoPresenter? = null
+    @DelicateCoroutinesApi
     private var fragmentPresenter: FragmentPresenter? = null
     private var navigationPresenter: NavigationPresenter? = null
     private lateinit var newReminderFragment: NewReminderFragment
@@ -106,6 +105,7 @@ class MainActivity : AppCompatActivity(),
         addButton.show()
     }
 
+    @DelicateCoroutinesApi
     override fun update(firstFragment: Fragment, secondFragment: Fragment) {
         if (firstFragment is NavigationContract.View) {
             navigationPresenter?.let { firstFragment.attachNavigationPresenter(it) }

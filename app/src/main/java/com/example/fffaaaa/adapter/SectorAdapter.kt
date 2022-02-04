@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.fffaaaa.R
 import com.example.fffaaaa.presenter.FragmentPresenter
 import com.example.fffaaaa.room.enitites.SectorEntity
+import kotlinx.coroutines.DelicateCoroutinesApi
 
-class SectorAdapter(
+class SectorAdapter @DelicateCoroutinesApi constructor(
     var sectorList: ArrayList<SectorEntity>,
     private var fragmentPresenter: FragmentPresenter) :
     RecyclerView.Adapter<SectorAdapter.GridRecyclerViewHolder>() {
@@ -22,6 +23,7 @@ class SectorAdapter(
         return GridRecyclerViewHolder(v)
     }
 
+    @DelicateCoroutinesApi
     override fun onBindViewHolder(
         holder: GridRecyclerViewHolder,
         position: Int
